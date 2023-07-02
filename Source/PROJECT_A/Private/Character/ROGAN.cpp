@@ -73,7 +73,10 @@ void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AROGAN::Move);
 		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Triggered, this, &AROGAN::Walk);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AROGAN::Crouching);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AROGAN::Look);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AROGAN::Jump);
+		EnhancedInputComponent->BindAction(JumpAction,ETriggerEvent::Completed,this,&AROGAN::StopJumping);
 	}
 }
 
@@ -107,7 +110,22 @@ void AROGAN::Move(const FInputActionValue& Value)
 
 void AROGAN::Walk(const FInputActionValue& Value)
 {
-	bIsWalk = Value.Get<bool>();
+	bIsWalk = Value.Get<bool>();	
+}
+
+void AROGAN::Crouching(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp,Error,TEXT("%d"),Value.Get<bool>());
+	if(!bIsCrouch)
+	{
+		bIsFalling = true;
+		bIsCrouch = true;
+	}
+	else
+	{
+		bIsFalling = false;
+		bIsCrouch = false;
+	}
 }
 
 void AROGAN::Look(const FInputActionValue& Value)
@@ -119,5 +137,18 @@ void AROGAN::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AROGAN::Jump()
+{
+	if(!bIsFalling)
+	{
+		Super::Jump();	
+	}
+}
+
+void AROGAN::StopJumping()
+{
+	Super::StopJumping();
 }
 

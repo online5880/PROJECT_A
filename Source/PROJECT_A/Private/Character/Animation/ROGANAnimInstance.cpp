@@ -34,7 +34,8 @@ void UROGANAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Speed = UKismetMathLibrary::VSizeXY(MovementComponent->Velocity);
 		Direction = UKismetAnimationLibrary::CalculateDirection(MovementComponent->Velocity,ROGANCharacter->GetActorRotation()); 
 		bIsMove = ((Speed > 3.f) && (MovementComponent->GetCurrentAcceleration() != FVector::ZeroVector));
-		bIsFalling = MovementComponent->IsFalling();
+		bIsFalling = ROGANCharacter->GetIsFalling();
+		bIsCrouching = ROGANCharacter->GetIsCrouch();
 		ForwardInputValue = ROGANCharacter->GetForwardInputValue();
 		RightInputValue = ROGANCharacter->GetRightInputValue();
 	}

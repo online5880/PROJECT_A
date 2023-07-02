@@ -53,5 +53,8 @@ private:
 	// Forward Input Value
 	UPROPERTY(BlueprintReadOnly,Category = "Character", meta =(AllowPrivateAccess = "true"))
 	double ForwardInputValue;
+
+	UPROPERTY(BlueprintReadOnly,Category = "Character", meta =(AllowPrivateAccess = "true"))
+	bool bIsCrouching;
 	
 };
