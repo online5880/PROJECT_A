@@ -36,6 +36,7 @@ void UROGANAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsMove = ((Speed > 3.f) && (MovementComponent->GetCurrentAcceleration() != FVector::ZeroVector));
 		bIsFalling = ROGANCharacter->GetIsFalling();
 		bIsCrouching = ROGANCharacter->GetIsCrouch();
+		bIsDodge = ROGANCharacter->GetIsDodge();
 		ForwardInputValue = ROGANCharacter->GetForwardInputValue();
 		RightInputValue = ROGANCharacter->GetRightInputValue();
 	}

@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "MotionWarpingComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Character/Animation/ROGANAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -42,25 +43,15 @@ void AROGAN::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if(APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext,0);
-		}
-	}
+	Init();
 }
 
 void AROGAN::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if(RightInputValue != 0.f || ForwardInputValue != 0.f)
-	{
-		const FRotator InterpRot = UKismetMathLibrary::RInterpTo(GetActorRotation(),GetControlRotation(),DeltaTime,6.f);
-		SetActorRotation(FRotator(0.f,InterpRot.Yaw,0.f));
-	}
-
+	
+	SmoothCameraRotation(DeltaTime);
+	CheckFalling();
 }
 
 void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -76,10 +67,41 @@ void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Triggered, this, &AROGAN::Walk);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AROGAN::Sprint);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AROGAN::Crouching);
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AROGAN::Dodge);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AROGAN::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AROGAN::Jump);
 		EnhancedInputComponent->BindAction(JumpAction,ETriggerEvent::Completed,this,&AROGAN::StopJumping);
 	}
+}
+
+void AROGAN::Init()
+{
+	if(const APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext,0);
+		}
+	}
+
+	if(AnimInstance == nullptr)
+	{
+		AnimInstance = Cast<UROGANAnimInstance>(GetMesh()->GetAnimInstance());
+	}
+}
+
+void AROGAN::SmoothCameraRotation(float DeltaTime)
+{
+	if(RightInputValue != 0.f || ForwardInputValue != 0.f)
+	{
+		const FRotator InterpRot = UKismetMathLibrary::RInterpTo(GetActorRotation(),GetControlRotation(),DeltaTime,6.f);
+		SetActorRotation(FRotator(0.f,InterpRot.Yaw,0.f));
+	}
+}
+
+void AROGAN::CheckFalling()
+{
+	bIsFalling = GetCharacterMovement()->IsFalling();
 }
 
 void AROGAN::Move(const FInputActionValue& Value)
@@ -118,6 +140,8 @@ void AROGAN::ResetMovementValue()
 {
 	ForwardInputValue = 0.f;
 	RightInputValue = 0.f;
+	bIsWalk = false;
+	bIsSprint = false;
 }
 
 void AROGAN::Walk(const FInputActionValue& Value)
@@ -134,13 +158,44 @@ void AROGAN::Crouching(const FInputActionValue& Value)
 {
 	if(!bIsCrouch)
 	{
-		bIsFalling = true;
+		
 		bIsCrouch = true;
+		Crouch();
 	}
 	else
 	{
-		bIsFalling = false;
-		bIsCrouch = false;
+		const FVector Start = GetActorLocation();
+		const FVector End = (GetActorUpVector()*100+Start);
+		FHitResult HitResult;
+		UKismetSystemLibrary::LineTraceSingle(
+			GetWorld(),
+			Start,
+			End,
+			TraceTypeQuery1,
+			false,
+			TArray<AActor*>(),
+			EDrawDebugTrace::None,
+			HitResult,
+			true);
+		if(!HitResult.bBlockingHit)
+		{
+			
+			bIsCrouch = false;
+			UnCrouch();
+		}
+	}
+}
+
+void AROGAN::Dodge(const FInputActionValue& Value)
+{
+	if(RightInputValue != 0.f || ForwardInputValue != 0.f && !bIsDodge)
+	{
+		FTimerHandle DodgeTimer;
+		bIsDodge = true;
+		GetWorldTimerManager().SetTimer(DodgeTimer,[this]
+		{
+			bIsDodge = false;
+		},1.f,false);
 	}
 }
 
@@ -159,12 +214,25 @@ void AROGAN::Jump()
 {
 	if(!bIsFalling)
 	{
-		Super::Jump();	
+		Super::Jump();
 	}
 }
 
-void AROGAN::StopJumping()
+void AROGAN::OnJumped_Implementation()
 {
-	Super::StopJumping();
+	Super::OnJumped_Implementation();
+	if(AnimInstance)
+	{
+		AnimInstance->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
+	}
+}
+
+void AROGAN::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	if(AnimInstance)
+	{
+		AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);	
+	}
 }
 

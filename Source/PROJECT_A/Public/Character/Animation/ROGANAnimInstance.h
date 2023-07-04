@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Character/Enum/CharacterState.h"
 #include "ROGANAnimInstance.generated.h"
 class AROGAN;
 class UCharacterMovementComponent;
@@ -56,5 +57,7 @@ private:
 
 	UPROPERTY(BlueprintReadOnly,Category = "Character", meta =(AllowPrivateAccess = "true"))
 	bool bIsCrouching;
-	
+
+	UPROPERTY(BlueprintReadOnly,Category = "Character", meta =(AllowPrivateAccess = "true"))
+	bool bIsDodge;
 };
