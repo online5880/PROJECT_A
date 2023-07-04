@@ -8,6 +8,8 @@
 #include "ROGAN.generated.h"
 
 class UMotionWarpingComponent;
+class UInputAction;
+class UInputMappingContext;
 
 UCLASS()
 class PROJECT_A_API AROGAN : public ACharacter
@@ -24,13 +26,11 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 protected:
 	void Move(const FInputActionValue& Value);
-
+	void ResetMovementValue();
 	void Walk(const FInputActionValue& Value);
-
+	void Sprint(const FInputActionValue& Value);
 	void Crouching(const FInputActionValue& Value);
-	
 	void Look(const FInputActionValue& Value);
-
 	virtual void Jump() override;
 	virtual void StopJumping() override;
 
@@ -42,22 +42,25 @@ private:
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
+	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
+	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* WalkAction;
+	TObjectPtr<UInputAction> WalkAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* CrouchAction;
+	TObjectPtr<UInputAction> SprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
+	TObjectPtr<UInputAction> CrouchAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> LookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
@@ -73,6 +76,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsWalk;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	bool bIsSprint;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsCrouch;

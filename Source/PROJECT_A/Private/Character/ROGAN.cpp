@@ -72,7 +72,9 @@ void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		//EnhancedInputComponent->BindAction(JumpAction,ETriggerEvent::Triggered,this,&Jump);
 		
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AROGAN::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AROGAN::ResetMovementValue);
 		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Triggered, this, &AROGAN::Walk);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AROGAN::Sprint);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AROGAN::Crouching);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AROGAN::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AROGAN::Jump);
@@ -94,18 +96,28 @@ void AROGAN::Move(const FInputActionValue& Value)
 		
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);*/
-		
 		if(bIsWalk)
-		{
-			ForwardInputValue = MovementVector.Y*0.6f;
-			RightInputValue = MovementVector.X*0.6f;
-		}
-		else
 		{
 			ForwardInputValue = MovementVector.Y;
 			RightInputValue = MovementVector.X;
+		}
+		else if(bIsSprint)
+		{
+			ForwardInputValue = MovementVector.Y*3.f;
+			RightInputValue = MovementVector.X*3.f;
+		}
+		else
+		{
+			ForwardInputValue = MovementVector.Y*2.f;
+			RightInputValue = MovementVector.X*2.f;
 		}	
 	}
+}
+
+void AROGAN::ResetMovementValue()
+{
+	ForwardInputValue = 0.f;
+	RightInputValue = 0.f;
 }
 
 void AROGAN::Walk(const FInputActionValue& Value)
@@ -113,9 +125,13 @@ void AROGAN::Walk(const FInputActionValue& Value)
 	bIsWalk = Value.Get<bool>();	
 }
 
+void AROGAN::Sprint(const FInputActionValue& Value)
+{
+	bIsSprint = Value.Get<bool>();
+}
+
 void AROGAN::Crouching(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Error,TEXT("%d"),Value.Get<bool>());
 	if(!bIsCrouch)
 	{
 		bIsFalling = true;
