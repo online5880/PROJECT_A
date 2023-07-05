@@ -110,14 +110,6 @@ void AROGAN::Move(const FInputActionValue& Value)
 
 	if(Controller != nullptr)
 	{
-		/*const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0.f,Rotation.Yaw,0.f);
-
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);*/
 		if(bIsWalk)
 		{
 			ForwardInputValue = MovementVector.Y;
@@ -152,13 +144,19 @@ void AROGAN::Walk(const FInputActionValue& Value)
 void AROGAN::Sprint(const FInputActionValue& Value)
 {
 	bIsSprint = Value.Get<bool>();
+	if(bIsCrouch)
+	{
+		UnCrouch();
+		bIsCrouch =false;
+	}
 }
 
 void AROGAN::Crouching(const FInputActionValue& Value)
 {
-	if(!bIsCrouch)
+	const bool CanCrouching = !bIsCrouch && !bIsFalling && !bIsSprint;
+	
+	if(CanCrouching)
 	{
-		
 		bIsCrouch = true;
 		Crouch();
 	}
