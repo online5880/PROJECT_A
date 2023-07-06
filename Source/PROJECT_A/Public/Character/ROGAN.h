@@ -42,6 +42,7 @@ protected:
 	UFUNCTION()
 	virtual void OnJumped_Implementation() override;
 	virtual void Landed(const FHitResult& Hit) override;
+	void Climb();
 
 private:
 	
@@ -126,6 +127,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsDodge;
 #pragma endregion Movement Variables
+
+#pragma region Climb
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Climb", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> Climb_Montage;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Climb", meta = (AllowPrivateAccess = "true"))
+	bool bIsClimbing;
+#pragma endregion Climb
 
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

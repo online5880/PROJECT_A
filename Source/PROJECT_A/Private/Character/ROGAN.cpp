@@ -214,6 +214,13 @@ void AROGAN::Jump()
 	{
 		Super::Jump();
 	}
+	else
+	{
+		if(!bIsClimbing)
+		{
+			Climb();
+		}
+	}
 }
 
 void AROGAN::OnJumped_Implementation()
@@ -231,6 +238,22 @@ void AROGAN::Landed(const FHitResult& Hit)
 	if(AnimInstance)
 	{
 		AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);	
+	}
+}
+
+void AROGAN::Climb()
+{
+	if(AnimInstance && Climb_Montage)
+	{
+		AnimInstance->Montage_Play(Climb_Montage);
+		bIsClimbing = true;
+		FOnMontageEnded ClimbEndedDelegate;
+		ClimbEndedDelegate.BindLambda([this](UAnimMontage* Montage,bool bInterrupted)
+		{
+			bIsClimbing = false;
+			UE_LOG(LogTemp,Error,TEXT("Climb End"));
+		});
+		AnimInstance->Montage_SetEndDelegate(ClimbEndedDelegate);
 	}
 }
 
