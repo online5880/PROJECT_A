@@ -8,6 +8,7 @@
 #include "Enum/CharacterState.h"
 #include "ROGAN.generated.h"
 
+class UClimbComponent;
 class UROGANAnimInstance;
 class UMotionWarpingComponent;
 class UInputAction;
@@ -42,8 +43,6 @@ protected:
 	UFUNCTION()
 	virtual void OnJumped_Implementation() override;
 	virtual void Landed(const FHitResult& Hit) override;
-	void Climb();
-
 private:
 	
 #pragma region Component
@@ -58,8 +57,11 @@ private:
 	// 모션 워핑 컴포넌트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
-#pragma endregion Component
 
+	// 벽 오르기 컴포넌트(1m, 2m)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UClimbComponent> ClimbComponent;
+#pragma endregion Component
 	// 애님인스턴스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UROGANAnimInstance> AnimInstance;
@@ -127,14 +129,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsDodge;
 #pragma endregion Movement Variables
-
-#pragma region Climb
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Climb", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> Climb_Montage;
-
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Climb", meta = (AllowPrivateAccess = "true"))
-	bool bIsClimbing;
-#pragma endregion Climb
 
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

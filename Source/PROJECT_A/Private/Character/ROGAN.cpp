@@ -6,8 +6,11 @@
 #include "MotionWarpingComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/Animation/ROGANAnimInstance.h"
+#include "Character/Component/ClimbComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AROGAN::AROGAN()
@@ -37,6 +40,7 @@ AROGAN::AROGAN()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
+	ClimbComponent = CreateDefaultSubobject<UClimbComponent>(TEXT("ClimbComponent"));
 }
 
 void AROGAN::BeginPlay()
@@ -221,9 +225,9 @@ void AROGAN::Jump()
 			Climb();
 		}
 	}*/
-	if(!bIsClimbing)
+	if(ClimbComponent != nullptr)
 	{
-		Climb();
+		ClimbComponent->Climb();
 	}
 }
 
@@ -242,38 +246,6 @@ void AROGAN::Landed(const FHitResult& Hit)
 	if(AnimInstance)
 	{
 		AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);	
-	}
-}
-
-void AROGAN::Climb()
-{
-	if(AnimInstance && Climb_Montage)
-	{
-		FHitResult ClimbHitResult_1;
-		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
-		UKismetSystemLibrary::LineTraceSingleForObjects(
-			GetWorld(),
-			GetActorLocation(),
-			GetActorForwardVector()*125.f+GetActorLocation(),
-			ObjectTypes,
-			false,
-			TArray<AActor*>(),
-			EDrawDebugTrace::ForDuration,
-			ClimbHitResult_1,
-			true);
-		
-		
-		/*AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
-		AnimInstance->Montage_Play(Climb_Montage);
-		bIsClimbing = true;
-		FOnMontageEnded ClimbEndedDelegate;
-		ClimbEndedDelegate.BindLambda([this](UAnimMontage* Montage,bool bInterrupted)
-		{
-			bIsClimbing = false;
-			UE_LOG(LogTemp,Error,TEXT("Climb End"));
-		});
-		AnimInstance->Montage_SetEndDelegate(ClimbEndedDelegate);*/
 	}
 }
 
