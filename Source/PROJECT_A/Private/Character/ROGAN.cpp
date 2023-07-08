@@ -210,7 +210,7 @@ void AROGAN::Look(const FInputActionValue& Value)
 
 void AROGAN::Jump()
 {
-	if(!bIsFalling)
+	/*if(!bIsFalling)
 	{
 		Super::Jump();
 	}
@@ -220,6 +220,10 @@ void AROGAN::Jump()
 		{
 			Climb();
 		}
+	}*/
+	if(!bIsClimbing)
+	{
+		Climb();
 	}
 }
 
@@ -245,6 +249,22 @@ void AROGAN::Climb()
 {
 	if(AnimInstance && Climb_Montage)
 	{
+		FHitResult ClimbHitResult_1;
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
+		UKismetSystemLibrary::LineTraceSingleForObjects(
+			GetWorld(),
+			GetActorLocation(),
+			GetActorForwardVector()*125.f+GetActorLocation(),
+			ObjectTypes,
+			false,
+			TArray<AActor*>(),
+			EDrawDebugTrace::ForDuration,
+			ClimbHitResult_1,
+			true);
+		
+		
+		/*AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
 		AnimInstance->Montage_Play(Climb_Montage);
 		bIsClimbing = true;
 		FOnMontageEnded ClimbEndedDelegate;
@@ -253,7 +273,7 @@ void AROGAN::Climb()
 			bIsClimbing = false;
 			UE_LOG(LogTemp,Error,TEXT("Climb End"));
 		});
-		AnimInstance->Montage_SetEndDelegate(ClimbEndedDelegate);
+		AnimInstance->Montage_SetEndDelegate(ClimbEndedDelegate);*/
 	}
 }
 
