@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "ClimbComponent.generated.h"
 
 
@@ -19,13 +20,35 @@ public:
 	
 	void Climb();
 protected:
-	void CheckHeight();
+	void CheckHeight(FHitResult& HitResult) const;
+	FHitResult CheckFrontDistance();
 	
 
 private:
 #pragma region Climb
+
+	UPROPERTY()
+	AActor* Owner;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> Climb_Montage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
+	double FrontTraceDistance;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
+	double FrontTraceRadius; 
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
+	TArray<AActor*> IgnoreActors;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<EDrawDebugTrace::Type> TraceType;
+
+	FVector ClimbNormal;
 	
 	bool bIsClimbing;
 	
