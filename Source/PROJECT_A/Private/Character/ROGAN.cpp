@@ -111,8 +111,8 @@ void AROGAN::CheckFalling()
 void AROGAN::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2d>();
-
-	if(Controller != nullptr)
+	
+	if(Controller != nullptr && !AnimInstance->IsAnyMontagePlaying())
 	{
 		if(bIsWalk)
 		{
@@ -227,6 +227,7 @@ void AROGAN::Jump()
 	}*/
 	if(ClimbComponent != nullptr)
 	{
+		ResetMovementValue();
 		ClimbComponent->Climb();
 	}
 }
