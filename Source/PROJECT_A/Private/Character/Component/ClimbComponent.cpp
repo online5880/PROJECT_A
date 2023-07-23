@@ -175,7 +175,6 @@ EClimbType UClimbComponent::ConvertClimbType(const float& Height)
 
 void UClimbComponent::ClimbEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	// TODO 자연스럽게 종료 시키기
 	CharacterMovementComponent->SetMovementMode(MOVE_Walking);;
 	bIsClimbing = false;
 }
