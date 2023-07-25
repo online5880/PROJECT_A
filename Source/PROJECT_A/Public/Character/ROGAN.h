@@ -8,6 +8,9 @@
 #include "Enum/CharacterState.h"
 #include "ROGAN.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+class UCombatComponent;
 class UClimbComponent;
 class UROGANAnimInstance;
 class UMotionWarpingComponent;
@@ -43,16 +46,19 @@ protected:
 	UFUNCTION()
 	virtual void OnJumped_Implementation() override;
 	virtual void Landed(const FHitResult& Hit) override;
+
+	// Combat
+	void Attack();
 private:
 	
 #pragma region Component
 	// 스프링암
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	// 카메라
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	TObjectPtr<UCameraComponent> FollowCamera;
 
 	// 모션 워핑 컴포넌트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
@@ -61,6 +67,10 @@ private:
 	// 벽 오르기 컴포넌트(1m, 2m)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UClimbComponent> ClimbComponent;
+
+	// 컴뱃 컴포넌트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCombatComponent> CombatComponent;
 #pragma endregion Component
 	// 애님인스턴스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -98,6 +108,10 @@ private:
 	// 카메라 움직임 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> LookAction;
+
+	// 공격 액션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> AttackAction;
 #pragma endregion InputAction
 
 #pragma region Movement Variables

@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/Animation/ROGANAnimInstance.h"
 #include "Character/Component/ClimbComponent.h"
+#include "Character/Component/CombatComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -40,7 +41,8 @@ AROGAN::AROGAN()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
-	ClimbComponent = CreateDefaultSubobject<UClimbComponent>(TEXT("ClimbComponent"));
+	ClimbComponent = CreateDefaultSubobject<UClimbComponent>(TEXT("Climb Component"));
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
 }
 
 void AROGAN::BeginPlay()
@@ -75,6 +77,7 @@ void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AROGAN::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AROGAN::Jump);
 		EnhancedInputComponent->BindAction(JumpAction,ETriggerEvent::Completed,this,&AROGAN::StopJumping);
+		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&AROGAN::Attack);
 	}
 }
 
@@ -247,6 +250,14 @@ void AROGAN::Landed(const FHitResult& Hit)
 	if(AnimInstance)
 	{
 		AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);	
+	}
+}
+
+void AROGAN::Attack()
+{
+	if(CombatComponent)
+	{
+		CombatComponent->Attack();
 	}
 }
 
