@@ -34,4 +34,11 @@ private:
 	// 파이터 몽타주
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> FighterMontage;
+
+	// 콤보 횟수
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
+	int32 ComboCount;
+
+	// 최대 콤보 횟수
+	int32 MaxComboCount;
 };

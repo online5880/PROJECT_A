@@ -26,7 +26,11 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UCombatComponent::Attack()
 {
 	UE_LOG(LogTemp,Warning,TEXT("Attack"));
-	Attack_Fighter();
+	if(ComboCount > MaxComboCount)
+	{
+		ComboCount++;
+		Attack_Fighter();
+	}
 }
 
 void UCombatComponent::Attack_Fighter()
