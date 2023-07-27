@@ -15,6 +15,11 @@ void UCombatComponent::BeginPlay()
 	if(Owner)
 	{
 		AnimInstance = Cast<UAnimInstance>(Owner->GetMesh()->GetAnimInstance());
+		if(AnimInstance)
+		{
+			AnimInstance->OnMontageEnded.AddDynamic(this,&UCombatComponent::AttackEnded);
+			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this,&UCombatComponent::HandleMontageNotifyBegin);
+		}
 	}
 }
 
@@ -25,10 +30,9 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::Attack()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Attack"));
-	if(ComboCount > MaxComboCount)
+	ComboCount = 1;
+	if(!AnimInstance->IsAnyMontagePlaying())
 	{
-		ComboCount++;
 		Attack_Fighter();
 	}
 }
@@ -39,6 +43,25 @@ void UCombatComponent::Attack_Fighter()
 	{
 		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,__FUNCTION__);
 		AnimInstance->Montage_Play(FighterMontage);
+		CurrentPlayingMontage = AnimInstance->GetCurrentActiveMontage();
+	}
+}
+
+void UCombatComponent::AttackEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	CurrentPlayingMontage = nullptr;
+	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,__FUNCTION__);
+}
+
+void UCombatComponent::HandleMontageNotifyBegin(FName NotifyName,
+	const FBranchingPointNotifyPayload& BranchingPointPayload)
+{
+	ComboCount--;
+	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,FString::Printf(TEXT("%d"),ComboCount));
+	if(ComboCount == 0 && CurrentPlayingMontage != nullptr)
+	{
+		ComboCount = 0;
+		AnimInstance->Montage_Stop(0.5,CurrentPlayingMontage);
 	}
 }
 
