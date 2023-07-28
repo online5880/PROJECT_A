@@ -33,7 +33,6 @@ void UClimbComponent::BeginPlay()
 void UClimbComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 void UClimbComponent::Climb()
@@ -133,7 +132,7 @@ void UClimbComponent::PlayClimbMontage()
 		PrintClimbType();
 
 		const FName WarpName = FName("Climb");
-		const FVector Location = HeightHitResult.Location;
+		const FVector Location = HeightHitResult.ImpactPoint;
 		const FRotator Rotator = FRotator(0.f,UKismetMathLibrary::MakeRotFromX(ClimbNormal).Yaw-180.f,0.f);
 		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(WarpName,Location,Rotator);
 		CharacterMovementComponent->SetMovementMode(MOVE_Flying);

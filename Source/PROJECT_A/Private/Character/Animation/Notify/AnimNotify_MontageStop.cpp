@@ -4,7 +4,8 @@
 #include "Character/Animation/Notify/AnimNotify_MontageStop.h"
 
 UAnimNotify_MontageStop::UAnimNotify_MontageStop() :
-BlendOutValue(0.5f)
+BlendOutValue(0.5f),
+bEnable(true)
 {
 	
 }
@@ -15,7 +16,7 @@ void UAnimNotify_MontageStop::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 	Super::Notify(MeshComp, Animation, EventReference);
 
 	UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
-	if(AnimInstance)
+	if(AnimInstance && bEnable)
 	{
 		UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
 		if(CurrentMontage)

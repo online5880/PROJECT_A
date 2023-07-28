@@ -24,5 +24,8 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), DisplayName = "Value")
 	double BlendOutValue;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), DisplayName = "Enable")
+	bool bEnable;
+
 	virtual FString GetNotifyName_Implementation() const override;
 };

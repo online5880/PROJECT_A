@@ -18,6 +18,7 @@ void UCombatComponent::BeginPlay()
 		AnimInstance = (CharacterMesh) ? Cast<UAnimInstance>(CharacterMesh->GetAnimInstance()) : nullptr;
 		if (AnimInstance)
 		{
+			// Montage Ended 와 NotifyBegin 에 이벤드 바인딩
 			AnimInstance->OnMontageEnded.AddDynamic(this, &UCombatComponent::AttackEnded);
 			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UCombatComponent::HandleMontageNotifyBegin);
 		}
@@ -31,6 +32,7 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::Attack()
 {
+	// Max ComboCount 까지 증가
 	ComboCount = FMath::Clamp(++ComboCount, 1, MaxComboCount);
 	if(CanExecuteAttack())
 	{

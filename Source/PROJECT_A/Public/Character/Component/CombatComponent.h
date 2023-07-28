@@ -47,6 +47,10 @@ protected:
 	void HandleMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 
 	// 공격 가능한지?
+	/**
+	 * @brief 
+	 * @return Montage 가 재생중이지 않을 때 True
+	 */
 	bool CanExecuteAttack() const;
 
 private:
@@ -68,7 +72,7 @@ private:
 	TObjectPtr<UAnimMontage> FighterMontage;
 
 	// 현재 재생중인 Montage
-	UPROPERTY();
+	UPROPERTY()
 	TObjectPtr<UAnimMontage> CurrentPlayingMontage;
 
 	// Montage Ended Delegate 
