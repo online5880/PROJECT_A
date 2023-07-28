@@ -31,17 +31,23 @@ public:
 	UCombatComponent();
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
+	// 공격
 	void Attack();
 protected:
-	void Attack_Fighter();
+	// 파이터 공격
+	void PlayFighterMontage();
 
 	// Climb Montage Ended Delegate Event
 	UFUNCTION()
 	void AttackEnded(class UAnimMontage* Montage, bool bInterrupted);
 
+	// NotifyBegin Delegate
 	UFUNCTION()
 	void HandleMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+
+	// 공격 가능한지?
+	bool CanExecuteAttack() const;
 
 private:
 	// 컴포넌트 소유 액터

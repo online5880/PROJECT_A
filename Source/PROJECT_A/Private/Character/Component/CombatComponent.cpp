@@ -12,13 +12,14 @@ void UCombatComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = Cast<ACharacter>(GetOwner());
-	if(Owner)
+	if (Owner)
 	{
-		AnimInstance = Cast<UAnimInstance>(Owner->GetMesh()->GetAnimInstance());
-		if(AnimInstance)
+		const USkeletalMeshComponent* CharacterMesh = Owner->GetMesh();
+		AnimInstance = (CharacterMesh) ? Cast<UAnimInstance>(CharacterMesh->GetAnimInstance()) : nullptr;
+		if (AnimInstance)
 		{
-			AnimInstance->OnMontageEnded.AddDynamic(this,&UCombatComponent::AttackEnded);
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this,&UCombatComponent::HandleMontageNotifyBegin);
+			AnimInstance->OnMontageEnded.AddDynamic(this, &UCombatComponent::AttackEnded);
+			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UCombatComponent::HandleMontageNotifyBegin);
 		}
 	}
 }
@@ -30,19 +31,17 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::Attack()
 {
-	ComboCount = 1;
-	GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,FString::Printf(TEXT("Combo Count : %d"),ComboCount));
-	if(!AnimInstance->IsAnyMontagePlaying())
+	ComboCount = FMath::Clamp(++ComboCount, 1, MaxComboCount);
+	if(CanExecuteAttack())
 	{
-		Attack_Fighter();
+		PlayFighterMontage();
 	}
 }
 
-void UCombatComponent::Attack_Fighter()
+void UCombatComponent::PlayFighterMontage()
 {
 	if(FighterMontage && AnimInstance)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,__FUNCTION__);
 		AnimInstance->Montage_Play(FighterMontage);
 		CurrentPlayingMontage = AnimInstance->GetCurrentActiveMontage();
 	}
@@ -51,24 +50,29 @@ void UCombatComponent::Attack_Fighter()
 void UCombatComponent::AttackEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	CurrentPlayingMontage = nullptr;
-	//GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,__FUNCTION__);
+	ComboCount = 0;
 }
 
 void UCombatComponent::HandleMontageNotifyBegin(FName NotifyName,
 	const FBranchingPointNotifyPayload& BranchingPointPayload)
 {
-	if(CurrentPlayingMontage)
+	if(CurrentPlayingMontage && ComboCount > 0)
 	{
-		if(ComboCount == 1)
-		{
-			ComboCount--;
-		}
-		else
+		ComboCount--;
+		if(ComboCount == 0)
 		{
 			AnimInstance->Montage_Stop(0.25f,CurrentPlayingMontage);
-			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Orange,FString::Printf(TEXT("Stop")));
 		}
 	}
+}
+
+bool UCombatComponent::CanExecuteAttack() const
+{
+	if(AnimInstance)
+	{
+		return !AnimInstance->IsAnyMontagePlaying();
+	}
+	return false;
 }
 
 
