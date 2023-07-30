@@ -5,18 +5,65 @@
 
 #include "UtilityFunction.h"
 #include "Character/Component/CombatComponent.h"
+#include "Character/Interface/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UCombatTrace::UCombatTrace()
 {
 	AttackRadius = 30;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+}
+
+void UCombatTrace::PlayAttackSound(const UWorld* World) const
+{
+	if(World && AttackSound)
+	{
+		UGameplayStatics::PlaySound2D(World,AttackSound,AttackSoundVolume);	
+	}
+}
+
+void UCombatTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
+{
+	for (const TObjectPtr<AActor>& HitActor : HitActorArr)
+	{
+		if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		{
+			ICombatInterface::Execute_Damaged(HitActor);
+		}
+	}
+}
+
+void UCombatTrace::ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
+{
+	for (TObjectPtr<AActor> HitActor : HitActorArr)
+	{
+		if(HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		{
+			ICombatInterface::Execute_EndDamaged(HitActor);
+		}
+	}
 }
 
 void UCombatTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
                                const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+	
+	// World nullptr 이면 return
+	const UWorld* World = MeshComp->GetWorld();
+	if(World == nullptr) {return;}
+	
+	PlayAttackSound(World);
+	IgnoreActors.Emplace(MeshComp->GetOwner());
+}
+
+void UCombatTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,
+	const FAnimNotifyEventReference& EventReference)
+{
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
 	// World nullptr 이면 return
 	const UWorld* World = MeshComp->GetWorld();
@@ -25,8 +72,8 @@ void UCombatTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
 	// 트레이스 시작 위치
 	const FVector Start = MeshComp->GetSocketLocation(StartSocketName);
 	// 트레이스 끝 위치
-	const FVector End = MeshComp->GetSocketLocation(EndSocketName);
-
+	const FVector End = MeshComp->GetSocketLocation(EndSocketName)+FVector(0.00001);
+	
 	UKismetSystemLibrary::SphereTraceMultiForObjects(
 		World,
 		Start,
@@ -44,8 +91,28 @@ void UCombatTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
 	
 	for (const FHitResult& HitResult : HitResults)
 	{
-		PrintEditorMessage(3.f,HitResult.GetActor()->GetName());
+		AActor* HitActor = HitResult.GetActor();
+		if(HitActor && !HitActors.Contains(HitActor))
+		{
+			HitActors.Add(HitActor);
+			IgnoreActors.AddUnique(HitActor);
+		}
 	}
+	
+	ExecuteDamagedOnHitActors(HitActors);
+}
+
+void UCombatTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	const FAnimNotifyEventReference& EventReference)
+{
+	Super::NotifyEnd(MeshComp, Animation, EventReference);
+
+	ExecuteEndDamagedOnHitActors(HitActors);
+
+	// 배열들 초기화
+	HitActors.Empty();
+	IgnoreActors.Empty();
+	HitResults.Empty();
 }
 
 FString UCombatTrace::GetNotifyName_Implementation() const

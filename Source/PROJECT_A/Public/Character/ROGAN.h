@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Enum/CharacterState.h"
+#include "Interface/CombatInterface.h"
 #include "ROGAN.generated.h"
 
 class USpringArmComponent;
@@ -18,7 +19,7 @@ class UInputAction;
 class UInputMappingContext;
 
 UCLASS()
-class PROJECT_A_API AROGAN : public ACharacter
+class PROJECT_A_API AROGAN : public ACharacter, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -34,6 +35,7 @@ protected:
 	void Init();
 	void SmoothCameraRotation(float DeltaTime);
 	void CheckFalling();
+	
 	// Movement
 	void Move(const FInputActionValue& Value);
 	void ResetMovementValue();
@@ -49,6 +51,10 @@ protected:
 
 	// Combat
 	void Attack();
+
+	// Interface
+	virtual void Damaged(const float Damage) override;
+
 private:
 	
 #pragma region Component

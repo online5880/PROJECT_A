@@ -259,3 +259,7 @@ void AROGAN::Attack()
 	}
 }
 
+void AROGAN::Damaged(const float Damage)
+{
+	UE_LOG(LogTemp,Warning,TEXT("Damaged : %f"),Damage);
+}

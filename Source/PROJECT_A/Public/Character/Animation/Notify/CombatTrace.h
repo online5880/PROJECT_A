@@ -21,6 +21,10 @@ public:
 
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
+	
+	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference) override;
+
+	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 	virtual FString GetNotifyName_Implementation() const override;
 
@@ -32,9 +36,28 @@ protected:
 
 	// Combat Component 를 MeshComp 로 부터 캐스팅
 	TObjectPtr<UCombatComponent> GetCombatComponentFromMesh(const USkeletalMeshComponent* MeshComp) const;
+
+	// 공격 소리 재생
+	void PlayAttackSound(const UWorld* World) const;
+
+	/**
+	 * @brief HitActor(CombatInterface->Damaged 실행)
+	 * @param HitActorArr HitActor 배열
+	 */
+	void ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr);
+
+	/**
+	 * @brief HitActor(CombatInterface->EndDamaged 실행)
+	 * @param HitActorArr HitActor 배열
+	 */
+	void ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr);
 private:
 	UPROPERTY()
 	TArray<FHitResult> HitResults;
+
+	// Trace 에 감지된 액터 배열
+	UPROPERTY()
+	TSet<TObjectPtr<AActor>> HitActors;
 
 	// Start trace mesh socket name
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Trace", meta =(AllowPrivateAccess = "true"))
@@ -55,4 +78,14 @@ private:
 	// 무시할 액터
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<AActor>> IgnoreActors;
+
+	// 공격 소리 에셋
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> AttackSound;
+
+	// 공격 소리 볼륨
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	float AttackSoundVolume = 1.f;
+
+	
 };
