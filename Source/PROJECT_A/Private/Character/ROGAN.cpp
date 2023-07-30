@@ -8,10 +8,8 @@
 #include "Character/Animation/ROGANAnimInstance.h"
 #include "Character/Component/ClimbComponent.h"
 #include "Character/Component/CombatComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AROGAN::AROGAN()

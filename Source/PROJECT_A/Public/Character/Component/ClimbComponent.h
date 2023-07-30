@@ -91,7 +91,7 @@ private:
 
 	// 무시할 액터
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))
-	TArray<AActor*> IgnoreActors;
+	TArray<TObjectPtr<AActor>> IgnoreActors;
 	
 	// 트레이스 타입
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Trace", meta = (AllowPrivateAccess = "true"))

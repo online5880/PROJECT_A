@@ -16,3 +16,15 @@ static FString GetEnumDisplayNameToString(T EnumValue)
 	return EnumPtr->GetDisplayNameTextByIndex(static_cast<int32>(EnumValue)).ToString();
 }
 
+static void PrintEditorMessage(const float Time,const FString& Message)
+{
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			Time,
+			FColor::Orange,
+			Message);	
+	}
+}
+

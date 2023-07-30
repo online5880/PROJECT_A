@@ -49,14 +49,19 @@ void UCombatComponent::PlayFighterMontage()
 	}
 }
 
-void UCombatComponent::AttackEnded(UAnimMontage* Montage, bool bInterrupted)
+void UCombatComponent::ResetCombo()
 {
 	CurrentPlayingMontage = nullptr;
 	ComboCount = 0;
 }
 
+void UCombatComponent::AttackEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	ResetCombo();
+}
+
 void UCombatComponent::HandleMontageNotifyBegin(FName NotifyName,
-	const FBranchingPointNotifyPayload& BranchingPointPayload)
+                                                const FBranchingPointNotifyPayload& BranchingPointPayload)
 {
 	if(CurrentPlayingMontage && ComboCount > 0)
 	{

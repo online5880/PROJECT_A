@@ -37,6 +37,8 @@ public:
 protected:
 	// 파이터 공격
 	void PlayFighterMontage();
+	// 콤보 초기화
+	void ResetCombo();
 
 	// Climb Montage Ended Delegate Event
 	UFUNCTION()
@@ -62,6 +64,12 @@ private:
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
 
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Debug", meta = (AllowPrivateAccess = "true"))
+	bool bDebug;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Debug", meta = (AllowPrivateAccess = "true"))
+	float DebugTime = 5.f;
+
 	// TODO 추후 리팩토링
 	// Montage(이름, Asset) 및 MaxCombo 횟수
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
@@ -85,4 +93,8 @@ private:
 	// 최대 콤보 횟수
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	int32 MaxComboCount;
+
+public:
+	FORCEINLINE bool GetDebug() const {return bDebug;}
+	FORCEINLINE float GetDebugTime() const {return DebugTime;}
 };

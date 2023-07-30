@@ -8,8 +8,8 @@ BlendOutValue(0.5f),
 bEnable(true)
 {
 	
-}
 
+}
 void UAnimNotify_MontageStop::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
                                      const FAnimNotifyEventReference& EventReference)
 {
