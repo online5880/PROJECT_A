@@ -51,6 +51,7 @@ protected:
 	 * @param HitActorArr HitActor 배열
 	 */
 	void ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr);
+	
 private:
 	UPROPERTY()
 	TArray<FHitResult> HitResults;

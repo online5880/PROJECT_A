@@ -17,35 +17,7 @@ UCombatTrace::UCombatTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 }
 
-void UCombatTrace::PlayAttackSound(const UWorld* World) const
-{
-	if(World && AttackSound)
-	{
-		UGameplayStatics::PlaySound2D(World,AttackSound,AttackSoundVolume);	
-	}
-}
 
-void UCombatTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
-{
-	for (const TObjectPtr<AActor>& HitActor : HitActorArr)
-	{
-		if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
-		{
-			ICombatInterface::Execute_Damaged(HitActor);
-		}
-	}
-}
-
-void UCombatTrace::ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
-{
-	for (TObjectPtr<AActor> HitActor : HitActorArr)
-	{
-		if(HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
-		{
-			ICombatInterface::Execute_EndDamaged(HitActor);
-		}
-	}
-}
 
 void UCombatTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
                                const FAnimNotifyEventReference& EventReference)
@@ -96,6 +68,17 @@ void UCombatTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 		{
 			HitActors.Add(HitActor);
 			IgnoreActors.AddUnique(HitActor);
+			
+			DrawDebugDirectionalArrow(
+				World,
+				HitResult.ImpactPoint,
+				HitResult.ImpactPoint+HitResult.ImpactNormal*-100.f,
+				10.f,
+				FColor::Orange,
+				false,
+				5.f,
+				0,
+				1.f);
 		}
 	}
 	
@@ -146,4 +129,34 @@ TObjectPtr<UCombatComponent> UCombatTrace::GetCombatComponentFromMesh(const USke
 	}
 
 	return Cast<UCombatComponent>(Owner->GetComponentByClass(UCombatComponent::StaticClass()));
+}
+
+void UCombatTrace::PlayAttackSound(const UWorld* World) const
+{
+	if(World && AttackSound)
+	{
+		UGameplayStatics::PlaySound2D(World,AttackSound,AttackSoundVolume);	
+	}
+}
+
+void UCombatTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
+{
+	for (const TObjectPtr<AActor>& HitActor : HitActorArr)
+	{
+		if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		{
+			ICombatInterface::Execute_Damaged(HitActor);
+		}
+	}
+}
+
+void UCombatTrace::ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
+{
+	for (TObjectPtr<AActor> HitActor : HitActorArr)
+	{
+		if(HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		{
+			ICombatInterface::Execute_EndDamaged(HitActor);
+		}
+	}
 }
