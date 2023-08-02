@@ -24,10 +24,5 @@ class PROJECT_A_API ICombatInterface
 public:
 	virtual void Damaged(const float Damage) = 0;
 
-	// TODO BlueprintNativeEvent 함수는 테스트용
-	UFUNCTION(BlueprintNativeEvent)
-	void Damaged();
-
-	UFUNCTION(BlueprintNativeEvent)
-	void EndDamaged();
+	virtual void EndDamaged() = 0;
 };

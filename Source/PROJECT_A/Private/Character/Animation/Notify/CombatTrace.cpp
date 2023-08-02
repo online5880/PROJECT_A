@@ -79,10 +79,10 @@ void UCombatTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 				5.f,
 				0,
 				1.f);
+
+			ExecuteDamagedOnHitActors(HitActors);
 		}
 	}
-	
-	ExecuteDamagedOnHitActors(HitActors);
 }
 
 void UCombatTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
@@ -143,20 +143,28 @@ void UCombatTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& Hit
 {
 	for (const TObjectPtr<AActor>& HitActor : HitActorArr)
 	{
-		if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		//if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		if (HitActor && HitActor->GetComponentByClass(UCombatComponent::StaticClass()))
 		{
-			ICombatInterface::Execute_Damaged(HitActor);
+			ICombatInterface* Interface = Cast<ICombatInterface>(HitActor);
+			if(Interface)
+			{
+				Interface->Damaged(0.f);
+			}
 		}
 	}
 }
-
 void UCombatTrace::ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
 {
 	for (TObjectPtr<AActor> HitActor : HitActorArr)
 	{
 		if(HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
 		{
-			ICombatInterface::Execute_EndDamaged(HitActor);
+			ICombatInterface* Interface = Cast<ICombatInterface>(HitActor);
+			if(Interface)
+			{
+				Interface->EndDamaged();
+			}
 		}
 	}
 }

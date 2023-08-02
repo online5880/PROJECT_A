@@ -64,6 +64,10 @@ private:
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
 
+	// 데미지를 받을 수 있는지
+	UPROPERTY()
+	bool bCanDamaged;
+
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Debug", meta = (AllowPrivateAccess = "true"))
 	bool bDebug;
 
@@ -95,6 +99,9 @@ private:
 	int32 MaxComboCount;
 
 public:
+	FORCEINLINE bool GetDamaged() const {return bCanDamaged;}
+	FORCEINLINE void SetDamaged(const bool CanDamaged) {bCanDamaged = CanDamaged;}
+	
 	FORCEINLINE bool GetDebug() const {return bDebug;}
 	FORCEINLINE float GetDebugTime() const {return DebugTime;}
 };

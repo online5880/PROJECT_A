@@ -54,6 +54,7 @@ protected:
 
 	// Interface
 	virtual void Damaged(const float Damage) override;
+	virtual void EndDamaged() override;
 
 private:
 	
