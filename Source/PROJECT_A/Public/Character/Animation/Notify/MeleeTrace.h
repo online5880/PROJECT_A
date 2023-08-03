@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "CombatTrace.generated.h"
+#include "MeleeTrace.generated.h"
 
 class UCombatComponent;
 /**
  * 
  */
 UCLASS()
-class PROJECT_A_API UCombatTrace : public UAnimNotifyState
+class PROJECT_A_API UMeleeTrace : public UAnimNotifyState
 {
 	GENERATED_BODY()
 
 public:
-	UCombatTrace();
+	UMeleeTrace();
 
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
@@ -44,7 +44,7 @@ protected:
 	 * @brief HitActor(CombatInterface->Damaged 실행)
 	 * @param HitActorArr HitActor 배열
 	 */
-	void ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr);
+	void ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr,const FVector& Normal);
 
 	/**
 	 * @brief HitActor(CombatInterface->EndDamaged 실행)

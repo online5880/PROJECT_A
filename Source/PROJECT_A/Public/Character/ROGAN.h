@@ -53,7 +53,7 @@ protected:
 	void Attack();
 
 	// Interface
-	virtual void Damaged(const float Damage) override;
+	virtual void Damaged(const float Damage, const FVector& Normal) override;
 	virtual void EndDamaged() override;
 
 private:

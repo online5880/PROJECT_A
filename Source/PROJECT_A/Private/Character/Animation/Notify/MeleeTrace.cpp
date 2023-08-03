@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/Animation/Notify/CombatTrace.h"
+#include "Character/Animation/Notify/MeleeTrace.h"
 
 #include "UtilityFunction.h"
 #include "Character/Component/CombatComponent.h"
@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-UCombatTrace::UCombatTrace()
+UMeleeTrace::UMeleeTrace()
 {
 	AttackRadius = 30;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
@@ -19,20 +19,15 @@ UCombatTrace::UCombatTrace()
 
 
 
-void UCombatTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
+void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
                                const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 	
-	// World nullptr 이면 return
-	const UWorld* World = MeshComp->GetWorld();
-	if(World == nullptr) {return;}
-	
-	PlayAttackSound(World);
 	IgnoreActors.Emplace(MeshComp->GetOwner());
 }
 
-void UCombatTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,
+void UMeleeTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
@@ -72,20 +67,20 @@ void UCombatTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 			DrawDebugDirectionalArrow(
 				World,
 				HitResult.ImpactPoint,
-				HitResult.ImpactPoint+HitResult.ImpactNormal*-100.f,
-				10.f,
+				HitResult.ImpactPoint+(HitResult.ImpactNormal*FVector(1.f,1.f,0.f))*-100.f,
+				20.f,
 				FColor::Orange,
 				false,
 				5.f,
 				0,
-				1.f);
+				2.f);
 
-			ExecuteDamagedOnHitActors(HitActors);
+			ExecuteDamagedOnHitActors(HitActors,HitResult.ImpactNormal);
 		}
 	}
 }
 
-void UCombatTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+void UMeleeTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
@@ -98,24 +93,24 @@ void UCombatTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 	HitResults.Empty();
 }
 
-FString UCombatTrace::GetNotifyName_Implementation() const
+FString UMeleeTrace::GetNotifyName_Implementation() const
 {
-	return FString("Combat Trace");
+	return FString("Melee Trace");
 }
 
-TEnumAsByte<EDrawDebugTrace::Type> UCombatTrace::DrawDebugType(const USkeletalMeshComponent* MeshComp) const
+TEnumAsByte<EDrawDebugTrace::Type> UMeleeTrace::DrawDebugType(const USkeletalMeshComponent* MeshComp) const
 {
 	const UCombatComponent* Component = GetCombatComponentFromMesh(MeshComp);
 	return (Component && Component->GetDebug()) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
 }
 
-float UCombatTrace::DebugTime(const USkeletalMeshComponent* MeshComp) const
+float UMeleeTrace::DebugTime(const USkeletalMeshComponent* MeshComp) const
 {
 	const UCombatComponent* Component = GetCombatComponentFromMesh(MeshComp);
 	return (Component) ? Component->GetDebugTime() : 5.f;
 }
 
-TObjectPtr<UCombatComponent> UCombatTrace::GetCombatComponentFromMesh(const USkeletalMeshComponent* MeshComp) const
+TObjectPtr<UCombatComponent> UMeleeTrace::GetCombatComponentFromMesh(const USkeletalMeshComponent* MeshComp) const
 {
 	if (!MeshComp)
 	{
@@ -131,7 +126,7 @@ TObjectPtr<UCombatComponent> UCombatTrace::GetCombatComponentFromMesh(const USke
 	return Cast<UCombatComponent>(Owner->GetComponentByClass(UCombatComponent::StaticClass()));
 }
 
-void UCombatTrace::PlayAttackSound(const UWorld* World) const
+void UMeleeTrace::PlayAttackSound(const UWorld* World) const
 {
 	if(World && AttackSound)
 	{
@@ -139,7 +134,7 @@ void UCombatTrace::PlayAttackSound(const UWorld* World) const
 	}
 }
 
-void UCombatTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
+void UMeleeTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr,const FVector& Normal)
 {
 	for (const TObjectPtr<AActor>& HitActor : HitActorArr)
 	{
@@ -149,12 +144,12 @@ void UCombatTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& Hit
 			ICombatInterface* Interface = Cast<ICombatInterface>(HitActor);
 			if(Interface)
 			{
-				Interface->Damaged(0.f);
+				Interface->Damaged(0.f,Normal);
 			}
 		}
 	}
 }
-void UCombatTrace::ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
+void UMeleeTrace::ExecuteEndDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr)
 {
 	for (TObjectPtr<AActor> HitActor : HitActorArr)
 	{

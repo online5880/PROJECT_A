@@ -259,7 +259,7 @@ void AROGAN::Attack()
 	}
 }
 
-void AROGAN::Damaged(const float Damage)
+void AROGAN::Damaged(const float Damage, const FVector& Normal)
 {
 	UE_LOG(LogTemp,Warning,TEXT("Damaged : %f"),Damage);
 }
