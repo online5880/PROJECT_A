@@ -24,7 +24,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// Combat Interface
-	virtual void Damaged(const float Damage,const FVector& Normal) override;
+	virtual void Damaged(const float Damage,const FVector& Normal,const float AttackPower) override;
 	virtual void EndDamaged() override;
 
 private:

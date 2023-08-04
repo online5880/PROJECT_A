@@ -144,7 +144,7 @@ void UMeleeTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitA
 			ICombatInterface* Interface = Cast<ICombatInterface>(HitActor);
 			if(Interface)
 			{
-				Interface->Damaged(0.f,Normal);
+				Interface->Damaged(AttackDamage,Normal,AttackPower);
 			}
 		}
 	}

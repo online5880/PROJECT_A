@@ -88,5 +88,13 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	float AttackSoundVolume = 1.f;
 
+	// 공격 파워(밀려지는 수치)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Melee", meta = (AllowPrivateAccess = "true"))
+	float AttackPower = 500.f;
+
+	// 공격 데미지
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Melee", meta = (AllowPrivateAccess = "true"))
+	float AttackDamage;
+
 	
 };

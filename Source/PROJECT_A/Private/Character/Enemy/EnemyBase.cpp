@@ -36,11 +36,11 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
-void AEnemyBase::Damaged(const float Damage,const FVector& Normal)
+void AEnemyBase::Damaged(const float Damage,const FVector& Normal,const float AttackPower)
 {
 	if(!CombatComponent->GetDamaged())
 	{
-		LaunchCharacter( (Normal*FVector(1.f,1.f,0.f))*-500.f,false,true);
+		LaunchCharacter( (Normal*FVector(1.f,1.f,0.f))*-AttackPower,false,true);
 		CombatComponent->SetDamaged(true);
 	}
 }

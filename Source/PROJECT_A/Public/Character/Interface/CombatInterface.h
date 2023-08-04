@@ -22,7 +22,13 @@ class PROJECT_A_API ICombatInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Damaged(const float Damage, const FVector& Normal) = 0;
+	/**
+	 * @brief 
+	 * @param Damage 데미지
+	 * @param Normal Normal Vector
+	 * @param AttackPower 밀리는 수치
+	 */
+	virtual void Damaged(const float Damage, const FVector& Normal,const float AttackPower) = 0;
 
 	virtual void EndDamaged() = 0;
 };
