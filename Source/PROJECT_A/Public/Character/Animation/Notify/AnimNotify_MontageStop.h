@@ -21,9 +21,11 @@ protected:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 private:
+	// Blend 되면서 멈추는 시간
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), DisplayName = "Value")
 	double BlendOutValue;
 
+	// 디버그용 bool
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), DisplayName = "Enable")
 	bool bEnable;
 

@@ -98,6 +98,14 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	int32 MaxComboCount;
 
+	// 체력
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	float Health;
+
+	// 최대 체력
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	float MaxHealth;
+
 public:
 	FORCEINLINE bool GetDamaged() const {return bCanDamaged;}
 	FORCEINLINE void SetDamaged(const bool CanDamaged) {bCanDamaged = CanDamaged;}

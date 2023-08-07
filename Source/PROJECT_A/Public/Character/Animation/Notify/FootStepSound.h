@@ -15,9 +15,11 @@ struct FFootStepProperty : public FTableRowBase
 {
 	GENERATED_BODY()
 public:
+	// EPhysicalSurface 타입
 	UPROPERTY(EditDefaultsOnly,Category = "Sound")
 	TEnumAsByte<EPhysicalSurface> SurfaceType;
-	
+
+	// 재생될 소리
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TObjectPtr<USoundBase> Sound;
 };
@@ -38,6 +40,9 @@ protected:
 
 	virtual FString GetNotifyName_Implementation() const override;
 private:
+	/**
+	 * @brief EPhysicalSurface 에 맞는 SoundBase 를 쉽게 관리하기 위해서 DataTable 사용
+	 */
 	UPROPERTY(BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UDataTable> DT_FootStepSound;
 private:
