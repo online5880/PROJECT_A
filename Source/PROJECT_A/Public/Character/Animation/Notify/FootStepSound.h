@@ -45,5 +45,11 @@ private:
 	 */
 	UPROPERTY(BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UDataTable> DT_FootStepSound;
+
+	/**
+	 * @brief SurfaceType 출력
+	 */
+	UPROPERTY(BlueprintReadOnly, Category = "Debug", meta = (AllowPrivateAccess = "true"))
+	bool bDebugSurfaceType = false;
 private:
 };

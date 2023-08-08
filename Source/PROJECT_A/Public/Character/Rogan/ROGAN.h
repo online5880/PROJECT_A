@@ -3,23 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "Enum/CharacterState.h"
-#include "Interface/CombatInterface.h"
+#include "Character/BaseCharacter/BaseCharacter.h"
 #include "ROGAN.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
-class UCombatComponent;
-class UClimbComponent;
 class UROGANAnimInstance;
-class UMotionWarpingComponent;
 class UInputAction;
 class UInputMappingContext;
 
 UCLASS()
-class PROJECT_A_API AROGAN : public ACharacter, public ICombatInterface
+class PROJECT_A_API AROGAN : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -27,13 +22,15 @@ public:
 	AROGAN();
 
 	virtual void BeginPlay() override;
-	
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 protected:
+	// 초기화
 	void Init();
+	// 카메라 회전(Use deltaTime)
 	void SmoothCameraRotation(float DeltaTime);
+	// 떨어지는지 체크
 	void CheckFalling();
 	
 	// Movement
@@ -67,17 +64,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-	// 모션 워핑 컴포넌트
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
-
-	// 벽 오르기 컴포넌트(1m, 2m)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UClimbComponent> ClimbComponent;
-
-	// 컴뱃 컴포넌트
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCombatComponent> CombatComponent;
 #pragma endregion Component
 	// 애님인스턴스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

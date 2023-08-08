@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Character/Animation/ROGANAnimInstance.h"
-
 #include "KismetAnimationLibrary.h"
-#include "Character/ROGAN.h"
+#include "Character/Rogan/ROGAN.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -21,6 +20,7 @@ void UROGANAnimInstance::NativeInitializeAnimation()
 		if(ROGANCharacter)
 		{
 			MovementComponent = Cast<UCharacterMovementComponent>(ROGANCharacter->GetMovementComponent());
+		
 		}
 	}
 }

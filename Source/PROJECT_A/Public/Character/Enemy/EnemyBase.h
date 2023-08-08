@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/Interface/CombatInterface.h"
-#include "GameFramework/Character.h"
+#include "Character/BaseCharacter/BaseCharacter.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class PROJECT_A_API AEnemyBase : public ACharacter, public ICombatInterface
+class PROJECT_A_API AEnemyBase : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -28,8 +27,5 @@ protected:
 	virtual void EndDamaged() override;
 
 private:
-	// 컴뱃 컴포넌트
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCombatComponent> CombatComponent;
 
 };

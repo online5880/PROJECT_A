@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "Character/ROGAN.h"
+#include "Character/Rogan/ROGAN.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MotionWarpingComponent.h"
+#include "UtilityFunction.h"
 #include "Camera/CameraComponent.h"
 #include "Character/Animation/ROGANAnimInstance.h"
 #include "Character/Component/ClimbComponent.h"
@@ -37,10 +38,6 @@ AROGAN::AROGAN()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
-	ClimbComponent = CreateDefaultSubobject<UClimbComponent>(TEXT("Climb Component"));
-	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
 }
 
 void AROGAN::BeginPlay()
@@ -112,7 +109,6 @@ void AROGAN::CheckFalling()
 void AROGAN::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2d>();
-	
 	if(Controller != nullptr && !AnimInstance->IsAnyMontagePlaying())
 	{
 		if(bIsWalk)

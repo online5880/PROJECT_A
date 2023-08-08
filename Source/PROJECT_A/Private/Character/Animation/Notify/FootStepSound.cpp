@@ -49,13 +49,15 @@ void UFootStepSound::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 			{
 				EPhysicalSurface SurfaceType = PhysMaterial->SurfaceType;
 				FString SurfaceTypeString = UEnum::GetValueAsString<EPhysicalSurface>(SurfaceType);
-
-				PrintEditorMessage(1.f,SurfaceTypeString);
-            
 				FFootStepProperty* FootStepProperty = DT_FootStepSound->FindRow<FFootStepProperty>(*SurfaceTypeString, FString(""));
+				
 				if (FootStepProperty)
 				{
 					PlaySound2D(World, FootStepProperty->Sound);
+				}
+				if(bDebugSurfaceType)
+				{
+					PrintEditorMessage(1.f,FString("SurfaceType : ")+SurfaceTypeString);
 				}
 			}
 		}
