@@ -20,7 +20,6 @@ void UROGANAnimInstance::NativeInitializeAnimation()
 		if(ROGANCharacter)
 		{
 			MovementComponent = Cast<UCharacterMovementComponent>(ROGANCharacter->GetMovementComponent());
-		
 		}
 	}
 }

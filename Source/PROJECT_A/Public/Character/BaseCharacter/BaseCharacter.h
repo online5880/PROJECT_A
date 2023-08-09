@@ -28,8 +28,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// Interface
-	virtual void Damaged(const float Damage, const FVector& Normal, const float AttackPower) override{};
-	virtual void EndDamaged() override{};
+	virtual void Damaged(const float Damage, const FVector& Normal, const float AttackPower) override{}
+	virtual void EndDamaged() override{}
 
 #pragma endregion Component
 	// 모션 워핑 컴포넌트

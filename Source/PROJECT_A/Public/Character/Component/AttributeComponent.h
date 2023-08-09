@@ -15,9 +15,23 @@ class PROJECT_A_API UAttributeComponent : public UActorComponent
 public:	
 	UAttributeComponent();
 
+	/**
+	 * @brief 체력 감소
+	 * @param Value 값
+	 */
+	void DecreaseHealth(const float Value);
+	/**
+	 * @brief 체력 증가
+	 * @param Value 값
+	 */
+	void IncreaseHealth(const float Value);
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void Init();
+	void PrintCurrentHealth() const;
 
 private:
 	// 체력

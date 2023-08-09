@@ -3,6 +3,7 @@
 
 #include "Character/Enemy/EnemyBase.h"
 #include "UtilityFunction.h"
+#include "Character/Component/AttributeComponent.h"
 #include "Character/Component/CombatComponent.h"
 
 AEnemyBase::AEnemyBase()
@@ -34,6 +35,11 @@ void AEnemyBase::Damaged(const float Damage,const FVector& Normal,const float At
 	{
 		LaunchCharacter( (Normal*FVector(1.f,1.f,0.f))*-AttackPower,false,true);
 		CombatComponent->SetDamaged(true);
+		FTimerHandle T;
+		GetWorldTimerManager().SetTimer(T,[&,Damage]
+		{
+			AttributeComponent->DecreaseHealth(Damage);
+		},0.05f,false);
 	}
 }
 
