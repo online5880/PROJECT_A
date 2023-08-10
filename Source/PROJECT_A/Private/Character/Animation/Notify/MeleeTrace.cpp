@@ -5,6 +5,7 @@
 
 #include "UtilityFunction.h"
 #include "Character/Component/CombatComponent.h"
+#include "Character/Enemy/EnemyBase.h"
 #include "Character/Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -25,6 +26,47 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 	
 	IgnoreActors.Emplace(MeshComp->GetOwner());
+
+	TArray<FHitResult> OverlapHitResults;
+	TSet<AActor*> OverlapActors;
+	TArray<TEnumAsByte<EObjectTypeQuery>> EnemyObjectType;
+	EnemyObjectType.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1));
+	
+	UKismetSystemLibrary::SphereTraceMultiForObjects(
+		MeshComp->GetWorld(),
+		MeshComp->GetComponentLocation(),
+		MeshComp->GetComponentLocation()+FVector(0.1f),
+		500.f,
+		EnemyObjectType,
+		false,
+		IgnoreActors,
+		DrawDebugType(MeshComp),
+		OverlapHitResults,
+		true,
+		FLinearColor::Red,
+		FLinearColor::Green,
+		DebugTime(MeshComp));
+	
+	for (FHitResult& OverlapHitResult : OverlapHitResults)
+	{
+		const AActor* Actor = OverlapHitResult.GetActor();
+		if(Actor && !OverlapActors.Contains(Actor))
+		{
+			OverlapActors.Add(OverlapHitResult.GetActor());
+		}
+	}
+	
+	for (const AActor* OverlapActor : OverlapActors)
+	{
+		PrintEditorMessage(3.f,OverlapActor->GetName());
+	}
+	if(!OverlapHitResults.IsEmpty())
+	{
+		TArray<AActor*> Arr;
+		Arr.Append(OverlapActors.Array());
+		int32 RandomIndex = FMath::RandRange(0, Arr.Num() - 1);
+		MeshComp->GetOwner()->SetActorLocation(Arr[RandomIndex]->GetActorLocation());
+	}
 }
 
 void UMeleeTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,

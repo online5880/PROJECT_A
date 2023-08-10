@@ -38,7 +38,7 @@ void UFootStepSound::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 			TraceTypeQuery1,
 			false,
 			IgnoreActors,
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			HitResult,
 			true);
 
