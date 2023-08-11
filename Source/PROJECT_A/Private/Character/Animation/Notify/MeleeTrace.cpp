@@ -28,7 +28,7 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 	IgnoreActors.Emplace(MeshComp->GetOwner());
 
 	TArray<FHitResult> OverlapHitResults;
-	TSet<AActor*> OverlapActors;
+	TArray<AActor*> OverlapActors;
 	TArray<TEnumAsByte<EObjectTypeQuery>> EnemyObjectType;
 	EnemyObjectType.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1));
 	
@@ -56,16 +56,10 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 		}
 	}
 	
-	for (const AActor* OverlapActor : OverlapActors)
-	{
-		PrintEditorMessage(3.f,OverlapActor->GetName());
-	}
 	if(!OverlapHitResults.IsEmpty())
 	{
-		TArray<AActor*> Arr;
-		Arr.Append(OverlapActors.Array());
-		int32 RandomIndex = FMath::RandRange(0, Arr.Num() - 1);
-		MeshComp->GetOwner()->SetActorLocation(Arr[RandomIndex]->GetActorLocation());
+		const int32 RandomIndex = FMath::RandRange(0, OverlapActors.Num() - 1);
+		//MeshComp->GetOwner()->SetActorLocation(OverlapActors[RandomIndex]->GetActorLocation());
 	}
 }
 

@@ -27,12 +27,17 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UAttributeComponent::Init()
 {
-	Health = MaxHealth;
+	
 }
 
 void UAttributeComponent::PrintCurrentHealth() const
 {
 	PrintEditorMessage(3.f,FString::Printf(TEXT("Current Health :  %f"),Health));
+}
+
+float UAttributeComponent::GetHealthPercentage() const
+{
+	return (Health/MaxHealth);
 }
 
 void UAttributeComponent::DecreaseHealth(const float Value)

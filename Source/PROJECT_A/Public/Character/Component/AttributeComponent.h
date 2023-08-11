@@ -42,6 +42,9 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth = 100.f;
 
+	UFUNCTION(BlueprintCallable , Category = "Function")
+	float GetHealthPercentage() const;
+
 public:
 	// Health Getter, Setter
 	FORCEINLINE float GetHealth() const {return Health;}
