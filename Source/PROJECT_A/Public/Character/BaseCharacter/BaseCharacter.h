@@ -6,6 +6,7 @@
 #include "Character/Interface/CombatInterface.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
+
 class UAttributeComponent;
 class AROGAN;
 class AEnemyBase;

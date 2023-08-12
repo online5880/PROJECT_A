@@ -5,6 +5,7 @@
 
 #include "UtilityFunction.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 
 UAttributeComponent::UAttributeComponent()
@@ -51,9 +52,14 @@ void UAttributeComponent::DecreaseHealth(const float Value)
 			ACharacter* Character = Cast<ACharacter>(GetOwner());
 			if(Character)
 			{
+				UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(Character->GetComponentByClass(UWidgetComponent::StaticClass()));
 				Character->GetMesh()->SetCollisionProfileName("Ragdoll");
 				Character->GetMesh()->SetSimulatePhysics(true);
 				Character->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				if(WidgetComponent)
+				{
+					WidgetComponent->SetVisibility(false);
+				}
 			}
 		}
 		//PrintCurrentHealth();

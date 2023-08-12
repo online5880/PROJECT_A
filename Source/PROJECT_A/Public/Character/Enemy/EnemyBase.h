@@ -6,6 +6,9 @@
 #include "Character/BaseCharacter/BaseCharacter.h"
 #include "EnemyBase.generated.h"
 
+class UWidgetComponent;
+class UUserWidget;
+
 UCLASS()
 class PROJECT_A_API AEnemyBase : public ABaseCharacter
 {
@@ -27,5 +30,9 @@ protected:
 	virtual void EndDamaged() override;
 
 private:
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Widget", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWidgetComponent> AttributeWidget;
 
+	UPROPERTY()
+	TSubclassOf<UUserWidget> AttributeWidgetClass;
 };

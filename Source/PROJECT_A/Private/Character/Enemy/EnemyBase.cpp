@@ -2,19 +2,32 @@
 
 
 #include "Character/Enemy/EnemyBase.h"
-#include "UtilityFunction.h"
 #include "Character/Component/AttributeComponent.h"
 #include "Character/Component/CombatComponent.h"
+#include "Character/Widget/EnemyAttributeWidget.h"
+#include "Components/WidgetComponent.h"
 
 AEnemyBase::AEnemyBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	/*static ConstructorHelpers::FClassFinder<UUserWidget>
+	AttributeWidgetBP(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/_Game/Character/Enemy/Widget/WBP_EnemyAttribute.WBP_EnemyAttribute_C'"));
+	if(AttributeWidgetBP.Succeeded()) {AttributeWidgetClass = AttributeWidgetBP.Class;}*/
+
+	AttributeWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Attribute Widget"));
+	AttributeWidget->SetupAttachment(GetRootComponent());
+	AttributeWidget->SetDrawAtDesiredSize(true);
 }
 
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	UEnemyAttributeWidget* EnemyAttributeWidget = Cast<UEnemyAttributeWidget>(AttributeWidget->GetWidget());
+	if(EnemyAttributeWidget)
+	{
+		EnemyAttributeWidget->SetEnemyBase(this);
+	}
 }
 
 void AEnemyBase::Tick(float DeltaTime)
