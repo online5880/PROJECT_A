@@ -44,7 +44,7 @@ protected:
 	 * @brief HitActor(CombatInterface->Damaged 실행)
 	 * @param HitActorArr HitActor 배열
 	 */
-	void ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr,const FVector& Normal);
+	void ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr,const FVector& Normal,const FHitResult& HitResult,AActor* DamageCauser);
 
 	/**
 	 * @brief HitActor(CombatInterface->EndDamaged 실행)

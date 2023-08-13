@@ -4,7 +4,7 @@
 #include "Character/Component/ClimbComponent.h"
 
 #include "MotionWarpingComponent.h"
-#include "UtilityFunction.h"
+#include "..\..\..\Public\GlobalUtilty.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"

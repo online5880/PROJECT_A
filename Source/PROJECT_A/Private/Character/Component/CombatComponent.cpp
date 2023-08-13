@@ -7,10 +7,8 @@ UCombatComponent::UCombatComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UCombatComponent::BeginPlay()
+void UCombatComponent::Init()
 {
-	Super::BeginPlay();
-
 	Owner = Cast<ACharacter>(GetOwner());
 	if (Owner)
 	{
@@ -23,6 +21,13 @@ void UCombatComponent::BeginPlay()
 			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UCombatComponent::HandleMontageNotifyBegin);
 		}
 	}
+}
+
+void UCombatComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Init();
 }
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

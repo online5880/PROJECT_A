@@ -28,12 +28,23 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	/**
+	 * @brief 초기화
+	 */
 	void Init();
-	void PrintCurrentHealth() const;
 
+	/**
+	 * @brief 현재 체력 디버깅 메시지
+	 */
+	void PrintCurrentHealth() const;
 private:
+	/**
+	 * @brief 컴포넌트 주인 캐릭터
+	 */
+	UPROPERTY()
+	TObjectPtr<ACharacter> OwnerCharacter;
+	
 	// 체력
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	float Health = 100.f;
@@ -42,8 +53,17 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth = 100.f;
 
+	/**
+	 * @brief 체력 퍼센트 구하기
+	 * @return 퍼센트
+	 */
 	UFUNCTION(BlueprintCallable , Category = "Function")
 	float GetHealthPercentage() const;
+
+	/**
+	 * @brief 죽음
+	 */
+	void Die() const;
 
 public:
 	// Health Getter, Setter

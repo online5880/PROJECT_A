@@ -3,32 +3,29 @@
 
 #include "Character/Component/AttributeComponent.h"
 
-#include "UtilityFunction.h"
+#include "..\..\..\Public\GlobalUtilty.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 
 UAttributeComponent::UAttributeComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	//PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	Init();
-}
-
-void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 void UAttributeComponent::Init()
 {
-	
+	if(OwnerCharacter == nullptr)
+	{
+		OwnerCharacter = Cast<ACharacter>(GetOwner());
+	}
 }
 
 void UAttributeComponent::PrintCurrentHealth() const
@@ -41,28 +38,34 @@ float UAttributeComponent::GetHealthPercentage() const
 	return (Health/MaxHealth);
 }
 
+void UAttributeComponent::Die() const
+{
+	if(OwnerCharacter)
+	{
+		UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(OwnerCharacter->GetComponentByClass(UWidgetComponent::StaticClass()));
+		OwnerCharacter->GetMesh()->SetCollisionProfileName("Ragdoll");
+		OwnerCharacter->GetMesh()->SetSimulatePhysics(true);
+		OwnerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		OwnerCharacter->SetLifeSpan(5.f);
+		if(WidgetComponent)
+		{
+			WidgetComponent->SetVisibility(false);
+		}
+	}
+}
+
 void UAttributeComponent::DecreaseHealth(const float Value)
 {
 	if(Health > 0.f)
 	{
 		Health-=Value;
+		
 		if(Health <= 0)
 		{
 			Health = 0.f;
-			ACharacter* Character = Cast<ACharacter>(GetOwner());
-			if(Character)
-			{
-				UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(Character->GetComponentByClass(UWidgetComponent::StaticClass()));
-				Character->GetMesh()->SetCollisionProfileName("Ragdoll");
-				Character->GetMesh()->SetSimulatePhysics(true);
-				Character->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				if(WidgetComponent)
-				{
-					WidgetComponent->SetVisibility(false);
-				}
-			}
+			
+			Die();
 		}
-		//PrintCurrentHealth();
 	}
 	else
 	{

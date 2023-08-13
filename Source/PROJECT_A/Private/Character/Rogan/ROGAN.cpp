@@ -4,7 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MotionWarpingComponent.h"
-#include "UtilityFunction.h"
+#include "..\..\..\Public\GlobalUtilty.h"
 #include "Camera/CameraComponent.h"
 #include "Character/Animation/ROGANAnimInstance.h"
 #include "Character/Component/ClimbComponent.h"
@@ -255,11 +255,13 @@ void AROGAN::Attack()
 	}
 }
 
-void AROGAN::Damaged(const float Damage, const FVector& Normal,const float AttackPower)
+void AROGAN::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float AttackPower,
+	AActor* DamageCauser)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Damaged : %f"),Damage);
+	
 }
 
 void AROGAN::EndDamaged()
 {
+	
 }

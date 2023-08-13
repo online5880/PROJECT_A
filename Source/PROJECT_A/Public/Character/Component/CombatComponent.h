@@ -27,8 +27,10 @@ class PROJECT_A_API UCombatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UCombatComponent();
+	
+	// 초기화
+	void Init();
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -68,9 +70,11 @@ private:
 	UPROPERTY()
 	bool bCanDamaged;
 
+	// 디버그 On/Off
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Debug", meta = (AllowPrivateAccess = "true"))
 	bool bDebug;
 
+	// 디버그 타임
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Debug", meta = (AllowPrivateAccess = "true"))
 	float DebugTime = 5.f;
 
@@ -79,7 +83,7 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TArray<FCombatMontageInfo> MontageInfos;
 
-	// 파이터 몽타주
+	// 파이터 Montage
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> FighterMontage;
 
@@ -97,10 +101,17 @@ private:
 	// 최대 콤보 횟수
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	int32 MaxComboCount;
+
+	// 피격 Montage
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> ReactMontage;
+	
 public:
-	FORCEINLINE bool GetDamaged() const {return bCanDamaged;}
-	FORCEINLINE void SetDamaged(const bool CanDamaged) {bCanDamaged = CanDamaged;}
+	FORCEINLINE bool GetCanDamaged() const {return bCanDamaged;}
+	FORCEINLINE void SetCanDamaged(const bool CanDamaged) {bCanDamaged = CanDamaged;}
 	
 	FORCEINLINE bool GetDebug() const {return bDebug;}
 	FORCEINLINE float GetDebugTime() const {return DebugTime;}
+
+	FORCEINLINE TObjectPtr<UAnimMontage> GetReactMontage() const {return ReactMontage;}
 };
