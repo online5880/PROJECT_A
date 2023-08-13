@@ -4,6 +4,10 @@
 #include "Kismet/GameplayStatics.h"
 
 /**
+ * @brief EnemyObjectChannel 정의
+ */
+#define EnemyObjectType UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1)
+/**
  * @brief 타입(T)를 Enum 을 FString 으로 반환하는 함수
  * @tparam T 타입
  * @param EnumValue Enum

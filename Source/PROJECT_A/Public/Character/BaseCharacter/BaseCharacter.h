@@ -29,7 +29,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// Interface
-	virtual void Damaged(const float Damage, const FVector& Normal, const float AttackPower) override{}
+	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float AttackPower, AActor* DamageCauser) override{}
 	virtual void EndDamaged() override{}
 
 #pragma endregion Component
@@ -47,7 +47,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAttributeComponent> AttributeComponent;
-	
 #pragma endregion Component
 
 public:

@@ -3,7 +3,7 @@
 
 #include "Character/Animation/Notify/FootStepSound.h"
 
-#include "UtilityFunction.h"
+#include "..\..\..\..\Public\GlobalUtilty.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 

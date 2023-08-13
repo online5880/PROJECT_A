@@ -2,8 +2,11 @@
 
 
 #include "Character/Enemy/EnemyBase.h"
+
+#include "GlobalUtilty.h"
 #include "Character/Component/AttributeComponent.h"
 #include "Character/Component/CombatComponent.h"
+#include "Character/Enum/HitDirection.h"
 #include "Character/Widget/EnemyAttributeWidget.h"
 #include "Components/WidgetComponent.h"
 
@@ -39,28 +42,63 @@ void AEnemyBase::Tick(float DeltaTime)
 void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
-void AEnemyBase::Damaged(const float Damage,const FVector& Normal,const float AttackPower)
+void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo,
+	const float AttackPower, AActor* DamageCauser)
 {
-	if(!CombatComponent->GetDamaged())
+	if(!CombatComponent->GetCanDamaged())
 	{
+		CombatComponent->SetCanDamaged(true);
 		LaunchCharacter( (Normal*FVector(1.f,1.f,0.f))*-AttackPower,false,true);
-		CombatComponent->SetDamaged(true);
 		FTimerHandle T;
 		GetWorldTimerManager().SetTimer(T,[&,Damage]
 		{
 			AttributeComponent->DecreaseHealth(Damage);
 		},0.05f,false);
+
+		const FVector Forward = GetActorForwardVector();
+		const FVector ImpactLowered(HitInfo.ImpactPoint.X,HitInfo.ImpactPoint.Y,GetActorLocation().Z);
+		const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
+
+		// Forward * ToHit = |Forward||ToHit| * cos(theta) -> 내적
+		const double CosTheta = FVector::DotProduct(Forward,ToHit);
+		double Theta = FMath::Acos(CosTheta);
+		Theta = FMath::RadiansToDegrees(Theta);
+		const FVector CrossProduct = FVector::CrossProduct(Forward,ToHit);
+		if(CrossProduct.Z < 0)
+		{
+			Theta*=-1.f;
+		}
+		EHitDirection HitDirection;
+		
+		PrintEditorMessage(3.f,FString::Printf(TEXT("%f"),Theta));
+		if(Theta >= -45.f && Theta < 45.f)
+		{
+			HitDirection = EHitDirection::EHD_Front;
+		}
+		else if(Theta >= -135.f && Theta < -45.f)
+		{
+			HitDirection = EHitDirection::EHD_Left;
+		}
+		else if(Theta >= 45.f && Theta < 135.f)
+		{
+			HitDirection = EHitDirection::EHD_Right;
+		}
+		else
+		{
+			HitDirection = EHitDirection::EHD_Back;
+		}
+		
+		PrintEditorMessage(3.f,GetEnumDisplayNameToString(HitDirection));
 	}
 }
 
 void AEnemyBase::EndDamaged()
 {
-	if(CombatComponent && CombatComponent->GetDamaged())
+	if(CombatComponent && CombatComponent->GetCanDamaged())
 	{
-		CombatComponent->SetDamaged(false);
+		CombatComponent->SetCanDamaged(false);
 	}
 }
 

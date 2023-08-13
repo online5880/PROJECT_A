@@ -98,8 +98,8 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	int32 MaxComboCount;
 public:
-	FORCEINLINE bool GetDamaged() const {return bCanDamaged;}
-	FORCEINLINE void SetDamaged(const bool CanDamaged) {bCanDamaged = CanDamaged;}
+	FORCEINLINE bool GetCanDamaged() const {return bCanDamaged;}
+	FORCEINLINE void SetCanDamaged(const bool CanDamaged) {bCanDamaged = CanDamaged;}
 	
 	FORCEINLINE bool GetDebug() const {return bDebug;}
 	FORCEINLINE float GetDebugTime() const {return DebugTime;}

@@ -3,11 +3,12 @@
 
 #include "Character/Animation/Notify/MeleeTrace.h"
 
-#include "UtilityFunction.h"
+#include "..\..\..\..\Public\GlobalUtilty.h"
 #include "Character/Component/CombatComponent.h"
 #include "Character/Enemy/EnemyBase.h"
 #include "Character/Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UMeleeTrace::UMeleeTrace()
@@ -18,26 +19,25 @@ UMeleeTrace::UMeleeTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 }
 
-
-
 void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
                                const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
-	
+
+	// 공격을 시작할 때 주변에 있는 액터를 배열에 저장
 	IgnoreActors.Emplace(MeshComp->GetOwner());
 
 	TArray<FHitResult> OverlapHitResults;
 	TArray<AActor*> OverlapActors;
-	TArray<TEnumAsByte<EObjectTypeQuery>> EnemyObjectType;
-	EnemyObjectType.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1));
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType;
+	ObjectType.Add(EnemyObjectType);
 	
 	UKismetSystemLibrary::SphereTraceMultiForObjects(
 		MeshComp->GetWorld(),
 		MeshComp->GetComponentLocation(),
 		MeshComp->GetComponentLocation()+FVector(0.1f),
 		500.f,
-		EnemyObjectType,
+		ObjectType,
 		false,
 		IgnoreActors,
 		DrawDebugType(MeshComp),
@@ -54,12 +54,6 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 		{
 			OverlapActors.Add(OverlapHitResult.GetActor());
 		}
-	}
-	
-	if(!OverlapHitResults.IsEmpty())
-	{
-		const int32 RandomIndex = FMath::RandRange(0, OverlapActors.Num() - 1);
-		//MeshComp->GetOwner()->SetActorLocation(OverlapActors[RandomIndex]->GetActorLocation());
 	}
 }
 
@@ -110,8 +104,8 @@ void UMeleeTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 				5.f,
 				0,
 				2.f);
-
-			ExecuteDamagedOnHitActors(HitActors,HitResult.ImpactNormal);
+			
+			ExecuteDamagedOnHitActors(HitActors,HitResult.ImpactNormal,HitResult,MeshComp->GetOwner());
 		}
 	}
 }
@@ -170,17 +164,17 @@ void UMeleeTrace::PlayAttackSound(const UWorld* World) const
 	}
 }
 
-void UMeleeTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr,const FVector& Normal)
+void UMeleeTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitActorArr,const FVector& Normal,const FHitResult& HitResult,AActor* DamageCauser)
 {
 	for (const TObjectPtr<AActor>& HitActor : HitActorArr)
 	{
 		//if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
 		if (HitActor && HitActor->GetComponentByClass(UCombatComponent::StaticClass()))
 		{
-			ICombatInterface* Interface = Cast<ICombatInterface>(HitActor);
-			if(Interface)
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(HitActor);
+			if(CombatInterface)
 			{
-				Interface->Damaged(AttackDamage,Normal,AttackPower);
+				CombatInterface->TakeDamage(AttackDamage,Normal,HitResult,AttackPower,DamageCauser);
 			}
 		}
 	}
