@@ -69,12 +69,7 @@ void UAttributeComponent::DecreaseHealth(const float Value)
 	}
 	else
 	{
-		ACharacter* Character = Cast<ACharacter>(GetOwner());
-		if(Character)
-		{
-			Character->GetMesh()->SetCollisionProfileName("Ragdoll");
-			Character->GetMesh()->SetSimulatePhysics(true);
-		}
+		Die();
 	}
 }
 

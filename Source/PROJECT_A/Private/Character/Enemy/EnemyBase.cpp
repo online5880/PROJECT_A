@@ -22,15 +22,25 @@ AEnemyBase::AEnemyBase()
 	AttributeWidget->SetDrawAtDesiredSize(true);
 }
 
-void AEnemyBase::BeginPlay()
+void AEnemyBase::Init()
 {
-	Super::BeginPlay();
+	if(AnimInstance == nullptr)
+	{
+		AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	}
 
 	UEnemyAttributeWidget* EnemyAttributeWidget = Cast<UEnemyAttributeWidget>(AttributeWidget->GetWidget());
 	if(EnemyAttributeWidget)
 	{
 		EnemyAttributeWidget->SetEnemyBase(this);
 	}
+}
+
+void AEnemyBase::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	Init();
 }
 
 void AEnemyBase::Tick(float DeltaTime)
@@ -44,72 +54,83 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AEnemyBase::CalculateDegree(FHitResult const& HitInfo, double& Degree) const
+{
+	const FVector Forward = GetActorForwardVector();
+	const FVector ImpactLowered(HitInfo.ImpactPoint.X,HitInfo.ImpactPoint.Y,GetActorLocation().Z);
+	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
+		
+	const double CosTheta = FVector::DotProduct(Forward,ToHit);
+	Degree = FMath::Acos(CosTheta);
+	Degree = FMath::RadiansToDegrees(Degree);
+	const FVector CrossProduct = FVector::CrossProduct(Forward,ToHit);
+	if(CrossProduct.Z < 0)
+	{
+		Degree*=-1.f;
+	}
+}
+
+EHitDirection AEnemyBase::GetHitDirection(const double& Degree) const
+{
+	EHitDirection HitDirection;
+
+	if(Degree >= -45.f && Degree < 45.f)
+	{
+		HitDirection = EHitDirection::EHD_Front;
+	}
+	else if(Degree >= -135.f && Degree < -45.f)
+	{
+		HitDirection = EHitDirection::EHD_Left;
+	}
+	else if(Degree >= 45.f && Degree < 135.f)
+	{
+		HitDirection = EHitDirection::EHD_Right;
+	}
+	else
+	{
+		HitDirection = EHitDirection::EHD_Back;
+	}
+	return HitDirection;
+}
+
 void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo,
-	const float AttackPower, AActor* DamageCauser)
+                            const float AttackPower, AActor* DamageCauser)
 {
 	if(!CombatComponent->GetCanDamaged())
 	{
 		CombatComponent->SetCanDamaged(true);
 		LaunchCharacter( (Normal*FVector(1.f,1.f,0.f))*-AttackPower,false,true);
-		FTimerHandle T;
-		GetWorldTimerManager().SetTimer(T,[&,Damage]
+		FTimerHandle TakeDamageTimer;
+		GetWorldTimerManager().SetTimer(TakeDamageTimer,[&,Damage]
 		{
 			AttributeComponent->DecreaseHealth(Damage);
-		},0.05f,false);
-		
-		const FVector Forward = GetActorForwardVector();
-		const FVector ImpactLowered(HitInfo.ImpactPoint.X,HitInfo.ImpactPoint.Y,GetActorLocation().Z);
-		const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
 
-		// Forward * ToHit = |Forward||ToHit| * cos(theta) -> 내적
-		const double CosTheta = FVector::DotProduct(Forward,ToHit);
-		double Theta = FMath::Acos(CosTheta);
-		Theta = FMath::RadiansToDegrees(Theta);
-		const FVector CrossProduct = FVector::CrossProduct(Forward,ToHit);
-		if(CrossProduct.Z < 0)
-		{
-			Theta*=-1.f;
-		}
-		EHitDirection HitDirection;
-		FName MontageSection;
-		FString KnockDown = "KnockDown_";
-	
-		if(Theta >= -45.f && Theta < 45.f)
-		{
-			HitDirection = EHitDirection::EHD_Front;
-			MontageSection = *GetEnumDisplayNameToString(HitDirection);
-			if(Damage >= 50.f)
+			double Degree;
+			CalculateDegree(HitInfo, Degree);
+			const EHitDirection HitDirection = GetHitDirection(Degree);
+			FName MontageSection = *GetEnumDisplayNameToString(HitDirection);
+			const FString KnockDown = "KnockDown_";
+			
+			if(HitDirection == EHitDirection::EHD_Front)
 			{
-				MontageSection = *FString(KnockDown+GetEnumDisplayNameToString(HitDirection));
+				if(Damage >= 50.f)
+				{
+					MontageSection = *FString(KnockDown+GetEnumDisplayNameToString(HitDirection));
+				}
 			}
-		}
-		else if(Theta >= -135.f && Theta < -45.f)
-		{
-			HitDirection = EHitDirection::EHD_Left;
-			MontageSection = *GetEnumDisplayNameToString(HitDirection);
-		}
-		else if(Theta >= 45.f && Theta < 135.f)
-		{
-			HitDirection = EHitDirection::EHD_Right;
-			MontageSection = *GetEnumDisplayNameToString(HitDirection);
-		}
-		else
-		{
-			HitDirection = EHitDirection::EHD_Back;
-			MontageSection = *GetEnumDisplayNameToString(HitDirection);
-			if(Damage >= 50.f)
+			else if(HitDirection == EHitDirection::EHD_Back)
 			{
-				MontageSection = *FString(KnockDown+GetEnumDisplayNameToString(HitDirection));
+				if(Damage >= 50.f)
+				{
+					MontageSection = *FString(KnockDown+GetEnumDisplayNameToString(HitDirection));
+				}
 			}
-		}
-		
-		PrintEditorMessage(3.f,MontageSection.ToString());
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		if(AnimInstance && CombatComponent->GetReactMontage())
-		{
-			AnimInstance->Montage_Play(CombatComponent->GetReactMontage());
-			AnimInstance->Montage_JumpToSection(MontageSection);
-		}
+
+			PrintEditorMessage(3.f,MontageSection.ToString());
+			
+			PlayReactMontage(MontageSection);
+			
+		},0.05f,false);
 	}
 }
 
@@ -118,6 +139,15 @@ void AEnemyBase::EndDamaged()
 	if(CombatComponent && CombatComponent->GetCanDamaged())
 	{
 		CombatComponent->SetCanDamaged(false);
+	}
+}
+
+void AEnemyBase::PlayReactMontage(const FName& Section) const
+{
+	if(AnimInstance && CombatComponent->GetReactMontage())
+	{
+		AnimInstance->Montage_Play(CombatComponent->GetReactMontage());
+		AnimInstance->Montage_JumpToSection(Section);
 	}
 }
 
