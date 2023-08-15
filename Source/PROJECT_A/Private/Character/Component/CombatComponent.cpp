@@ -37,8 +37,10 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::Attack()
 {
+	// TODO Fighter 는 임시
+	CurrentMontageInfo = GetMontageInfo("Fighter");
 	// Max ComboCount 까지 증가
-	ComboCount = FMath::Clamp(++ComboCount, 1, MaxComboCount);
+	ComboCount = FMath::Clamp(++ComboCount, 1, CurrentMontageInfo.MaxComboCount);
 	if(CanExecuteAttack())
 	{
 		PlayFighterMontage();
@@ -47,9 +49,9 @@ void UCombatComponent::Attack()
 
 void UCombatComponent::PlayFighterMontage()
 {
-	if(FighterMontage && AnimInstance)
+	if(CurrentMontageInfo.Montage && AnimInstance)
 	{
-		AnimInstance->Montage_Play(FighterMontage);
+		AnimInstance->Montage_Play(CurrentMontageInfo.Montage);
 		CurrentPlayingMontage = AnimInstance->GetCurrentActiveMontage();
 	}
 }
@@ -85,6 +87,16 @@ bool UCombatComponent::CanExecuteAttack() const
 		return !AnimInstance->IsAnyMontagePlaying();
 	}
 	return false;
+}
+
+FCombatMontageInfo UCombatComponent::GetMontageInfo(const FString& Name)
+{
+	FCombatMontageInfo Ret;
+	if (!MontageInfos.IsEmpty())
+	{
+		Ret = MontageInfos.FindRef(Name);
+	}
+	return Ret;
 }
 
 

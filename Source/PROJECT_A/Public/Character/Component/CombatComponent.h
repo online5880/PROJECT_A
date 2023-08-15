@@ -12,9 +12,6 @@ struct FCombatMontageInfo
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Name;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> Montage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -57,6 +54,8 @@ protected:
 	 */
 	bool CanExecuteAttack() const;
 
+	FCombatMontageInfo GetMontageInfo(const FString& Name);
+
 private:
 	// 컴포넌트 소유 액터
 	UPROPERTY()
@@ -79,13 +78,17 @@ private:
 	float DebugTime = 5.f;
 
 	// TODO 추후 리팩토링
-	// Montage(이름, Asset) 및 MaxCombo 횟수
+	// Montage(이름, Asset) 및 MaxCombo 횟수 배열
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	TArray<FCombatMontageInfo> MontageInfos;
+	TMap<FString,FCombatMontageInfo> MontageInfos;
 
-	// 파이터 Montage
+	// 현재 MontageInfo
+	UPROPERTY()
+	FCombatMontageInfo CurrentMontageInfo;
+
+	/*// 파이터 Montage
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> FighterMontage;
+	TObjectPtr<UAnimMontage> FighterMontage;*/
 
 	// 현재 재생중인 Montage
 	UPROPERTY()
@@ -98,9 +101,9 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	int32 ComboCount;
 
-	// 최대 콤보 횟수
+	/*// 최대 콤보 횟수
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	int32 MaxComboCount;
+	int32 MaxComboCount;*/
 
 	// 피격 Montage
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
