@@ -29,7 +29,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// Interface
-	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float AttackPower, AActor* DamageCauser) override{}
+	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float AttackPower, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override{}
 	virtual void EndDamaged() override{}
 
 #pragma endregion Component

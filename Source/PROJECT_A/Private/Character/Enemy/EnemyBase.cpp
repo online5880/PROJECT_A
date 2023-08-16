@@ -54,7 +54,7 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AEnemyBase::CalculateDegree(FHitResult const& HitInfo, double& Degree) const
+void AEnemyBase::CalculateHitDegree(FHitResult const& HitInfo, double& Degree) const
 {
 	const FVector Forward = GetActorForwardVector();
 	const FVector ImpactLowered(HitInfo.ImpactPoint.X,HitInfo.ImpactPoint.Y,GetActorLocation().Z);
@@ -94,43 +94,48 @@ EHitDirection AEnemyBase::GetHitDirection(const double& Degree) const
 }
 
 void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo,
-                            const float AttackPower, AActor* DamageCauser)
+                            const float AttackPower, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
 {
 	if(!CombatComponent->GetCanDamaged())
 	{
 		CombatComponent->SetCanDamaged(true);
-		LaunchCharacter( (Normal*FVector(1.f,1.f,0.f))*-AttackPower,false,true);
+
+		const FVector LaunchDirection = Normal * FVector(1.f, 1.f, 0.f) * -AttackPower;
+		LaunchCharacter(LaunchDirection, false, true);
+    
 		FTimerHandle TakeDamageTimer;
-		GetWorldTimerManager().SetTimer(TakeDamageTimer,[&,Damage]
+		GetWorldTimerManager().SetTimer(TakeDamageTimer, [&, Damage]
 		{
 			AttributeComponent->DecreaseHealth(Damage);
 
 			double Degree;
-			CalculateDegree(HitInfo, Degree);
+			CalculateHitDegree(HitInfo, Degree);
 			const EHitDirection HitDirection = GetHitDirection(Degree);
 			FName MontageSection = *GetEnumDisplayNameToString(HitDirection);
 			const FString KnockDown = "KnockDown_";
-			
-			if(HitDirection == EHitDirection::EHD_Front)
+
+			if (Damage >= 50.f && (HitDirection == EHitDirection::EHD_Front || HitDirection == EHitDirection::EHD_Back))
 			{
-				if(Damage >= 50.f)
-				{
-					MontageSection = *FString(KnockDown+GetEnumDisplayNameToString(HitDirection));
-				}
-			}
-			else if(HitDirection == EHitDirection::EHD_Back)
-			{
-				if(Damage >= 50.f)
-				{
-					MontageSection = *FString(KnockDown+GetEnumDisplayNameToString(HitDirection));
-				}
+				MontageSection = *FString(KnockDown + GetEnumDisplayNameToString(HitDirection));
 			}
 
-			PrintEditorMessage(3.f,MontageSection.ToString());
-			
+			PrintEditorMessage(3.f, MontageSection.ToString());
+
 			PlayReactMontage(MontageSection);
-			
-		},0.05f,false);
+		}, 0.05f, false);
+		
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(),0.1f);
+		FTimerHandle SlowTimer;
+		GetWorldTimerManager().SetTimer(SlowTimer,[&]
+		{
+			UGameplayStatics::SetGlobalTimeDilation(GetWorld(),1.f);
+		},0.005f,false);
+
+		APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+		if(PlayerCameraManager && CameraShakeBase)
+		{
+			PlayerCameraManager->StartCameraShake(CameraShakeBase);
+		}
 	}
 }
 

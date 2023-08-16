@@ -172,9 +172,9 @@ void UMeleeTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitA
 		if (HitActor && HitActor->GetComponentByClass(UCombatComponent::StaticClass()))
 		{
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(HitActor);
-			if(CombatInterface)
+			if(CombatInterface && CameraShakeClass)
 			{
-				CombatInterface->TakeDamage(AttackDamage,Normal,HitResult,AttackPower,DamageCauser);
+				CombatInterface->TakeDamage(AttackDamage,Normal,HitResult,AttackPower,DamageCauser,CameraShakeClass);
 			}
 		}
 	}

@@ -96,5 +96,9 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Melee", meta = (AllowPrivateAccess = "true"))
 	float AttackDamage;
 
+	// Camera Shake Class
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Melee", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> CameraShakeClass;
+
 	
 };

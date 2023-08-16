@@ -29,8 +29,9 @@ public:
 	 * @param HitInfo FHitResult
 	 * @param AttackPower 밀리는 수치
 	 * @param DamageCauser 데미지를 주는 액터
+	 * @param CameraShakeBase CameraShake Class
 	 */
-	virtual void TakeDamage(const float Damage, const FVector& Normal,FHitResult const& HitInfo,const float AttackPower,AActor* DamageCauser) = 0;
+	virtual void TakeDamage(const float Damage, const FVector& Normal,FHitResult const& HitInfo,const float AttackPower,AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) = 0;
 
 	/**
 	 * @brief 데미지 받는게 끝남
