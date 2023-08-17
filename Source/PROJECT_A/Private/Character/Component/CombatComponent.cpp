@@ -91,7 +91,7 @@ bool UCombatComponent::CanExecuteAttack() const
 
 FCombatMontageInfo UCombatComponent::GetMontageInfo(const FString& Name)
 {
-	FCombatMontageInfo Ret;
+	FCombatMontageInfo Ret{};
 	if (!MontageInfos.IsEmpty())
 	{
 		Ret = MontageInfos.FindRef(Name);

@@ -46,7 +46,7 @@ protected:
 	EHitDirection GetHitDirection(const double& Degree) const;
 
 	// Combat Interface
-	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float AttackPower, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
+	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
 	virtual void EndDamaged() override;
 	
 	void PlayReactMontage(const FName& Section) const;

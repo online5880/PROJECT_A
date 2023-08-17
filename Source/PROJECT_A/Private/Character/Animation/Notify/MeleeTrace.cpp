@@ -55,6 +55,43 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 			OverlapActors.Add(OverlapHitResult.GetActor());
 		}
 	}
+	
+	const AActor* OwnerActor  =MeshComp->GetOwner();
+	OverlapActors.Sort([&](const AActor& A, const AActor& B)
+	{
+		return (A.GetActorLocation()- OwnerActor->GetActorLocation()).SizeSquared() < (B.GetActorLocation()-OwnerActor->GetActorLocation()).SizeSquared();
+	});
+
+
+	for (int i = 0; i < OverlapActors.Num(); ++i)
+	{
+		const AActor* Actor = OverlapActors[i];
+		FVector ActorLocation = Actor->GetActorLocation();
+		const float DistanceToPlayer = (ActorLocation - OwnerActor->GetActorLocation()).Size();
+		const float ColorIntensity = 1.0f - FMath::Clamp(DistanceToPlayer / 500.f, 0.0f, 1.0f);
+		
+		FColor DebugColor = FColor(255 * ColorIntensity, 0, 0);
+		DrawDebugSphere(
+			OverlapActors[i]->GetWorld(),
+			OverlapActors[i]->GetActorLocation(),
+			30.f,
+			16,
+			DebugColor,
+			false,
+			1.f,0,1);
+	}
+
+	
+	if(OverlapActors[0])
+	{
+		const AActor* Target = OverlapActors[0];
+		
+		const float DotProduct = FVector::DotProduct(OwnerActor->GetActorLocation(),Target->GetActorLocation() - OwnerActor->GetActorLocation());
+		if(DotProduct > 0.4f)
+		{
+			
+		}
+	}
 }
 
 void UMeleeTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,

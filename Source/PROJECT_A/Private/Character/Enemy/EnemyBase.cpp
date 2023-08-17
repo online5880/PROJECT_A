@@ -94,36 +94,40 @@ EHitDirection AEnemyBase::GetHitDirection(const double& Degree) const
 }
 
 void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo,
-                            const float AttackPower, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
+                            const float PushValue, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
 {
 	if(!CombatComponent->GetCanDamaged())
 	{
 		CombatComponent->SetCanDamaged(true);
 
-		const FVector LaunchDirection = Normal * FVector(1.f, 1.f, 0.f) * -AttackPower;
+		// Push
+		const FVector LaunchDirection = Normal * FVector(1.f, 1.f, 0.f) * -PushValue;
 		LaunchCharacter(LaunchDirection, false, true);
-    
+
+		/*// Damage
 		FTimerHandle TakeDamageTimer;
 		GetWorldTimerManager().SetTimer(TakeDamageTimer, [&, Damage]
 		{
-			AttributeComponent->DecreaseHealth(Damage);
+			
+		}, 0.0005f, false);*/
 
-			double Degree;
-			CalculateHitDegree(HitInfo, Degree);
-			const EHitDirection HitDirection = GetHitDirection(Degree);
-			FName MontageSection = *GetEnumDisplayNameToString(HitDirection);
-			const FString KnockDown = "KnockDown_";
+		// Damage
+		AttributeComponent->DecreaseHealth(Damage);
 
-			if (Damage >= 50.f && (HitDirection == EHitDirection::EHD_Front || HitDirection == EHitDirection::EHD_Back))
-			{
-				MontageSection = *FString(KnockDown + GetEnumDisplayNameToString(HitDirection));
-			}
+		double Degree;
+		CalculateHitDegree(HitInfo, Degree);
+		const EHitDirection HitDirection = GetHitDirection(Degree);
+		FName MontageSection = *GetEnumDisplayNameToString(HitDirection);
+		const FString KnockDown = "KnockDown_";
 
-			PrintEditorMessage(3.f, MontageSection.ToString());
-
-			PlayReactMontage(MontageSection);
-		}, 0.05f, false);
+		if (Damage >= 50.f && (HitDirection == EHitDirection::EHD_Front || HitDirection == EHitDirection::EHD_Back))
+		{
+			MontageSection = *FString(KnockDown + GetEnumDisplayNameToString(HitDirection));
+		}
+			
+		PlayReactMontage(MontageSection);
 		
+		// Slow
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(),0.1f);
 		FTimerHandle SlowTimer;
 		GetWorldTimerManager().SetTimer(SlowTimer,[&]
@@ -131,6 +135,7 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 			UGameplayStatics::SetGlobalTimeDilation(GetWorld(),1.f);
 		},0.005f,false);
 
+		// CameraShake
 		APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 		if(PlayerCameraManager && CameraShakeBase)
 		{

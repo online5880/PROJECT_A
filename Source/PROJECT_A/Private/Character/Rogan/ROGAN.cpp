@@ -255,10 +255,10 @@ void AROGAN::Attack()
 	}
 }
 
-void AROGAN::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float AttackPower,
+void AROGAN::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue,
 	AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
 {
-	Super::TakeDamage(Damage, Normal, HitInfo, AttackPower, DamageCauser, CameraShakeBase);
+	Super::TakeDamage(Damage, Normal, HitInfo, PushValue, DamageCauser, CameraShakeBase);
 }
 
 void AROGAN::EndDamaged()
