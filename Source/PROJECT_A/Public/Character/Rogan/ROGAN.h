@@ -7,6 +7,7 @@
 #include "Character/BaseCharacter/BaseCharacter.h"
 #include "ROGAN.generated.h"
 
+enum class ECharacterMovementState : uint8;
 class USpringArmComponent;
 class UCameraComponent;
 class UROGANAnimInstance;
@@ -108,6 +109,11 @@ private:
 #pragma endregion InputAction
 
 #pragma region Movement Variables
+
+	// Movement State(Enum)
+	UPROPERTY()
+	ECharacterMovementState MovementState;
+	
 	// 움직임 값 - X
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	double RightInputValue;

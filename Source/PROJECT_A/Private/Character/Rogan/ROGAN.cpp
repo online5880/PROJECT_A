@@ -115,16 +115,19 @@ void AROGAN::Move(const FInputActionValue& Value)
 		{
 			ForwardInputValue = MovementVector.Y;
 			RightInputValue = MovementVector.X;
+			MovementState = ECharacterMovementState::ECMS_Walk;
 		}
 		else if(bIsSprint)
 		{
 			ForwardInputValue = MovementVector.Y*3.f;
 			RightInputValue = MovementVector.X*3.f;
+			MovementState = ECharacterMovementState::ECMS_Sprint;
 		}
 		else
 		{
 			ForwardInputValue = MovementVector.Y*2.f;
 			RightInputValue = MovementVector.X*2.f;
+			MovementState = ECharacterMovementState::ECMS_Walk;
 		}	
 	}
 }
@@ -251,6 +254,11 @@ void AROGAN::Attack()
 {
 	if(CombatComponent)
 	{
+		// TODO Sprint Attack 추가
+		/*if(GetVelocity().Size2D() > 680.f)
+		{
+			PrintEditorMessage(3.f,"Sprint Attack");
+		}*/
 		CombatComponent->Attack();
 	}
 }
