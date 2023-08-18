@@ -35,23 +35,23 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCombatComponent::Attack()
+void UCombatComponent::Attack(const FString& InfoName)
 {
 	// TODO Fighter 는 임시
-	CurrentMontageInfo = GetMontageInfo("Fighter");
+	const FCombatMontageInfo CurrentMontageInfo = GetMontageInfo(InfoName);
 	// Max ComboCount 까지 증가
 	ComboCount = FMath::Clamp(++ComboCount, 1, CurrentMontageInfo.MaxComboCount);
 	if(CanExecuteAttack())
 	{
-		PlayFighterMontage();
+		PlayMontage(CurrentMontageInfo);
 	}
 }
 
-void UCombatComponent::PlayFighterMontage()
+void UCombatComponent::PlayMontage(const FCombatMontageInfo& Info)
 {
-	if(CurrentMontageInfo.Montage && AnimInstance)
+	if(Info.Montage && AnimInstance)
 	{
-		AnimInstance->Montage_Play(CurrentMontageInfo.Montage);
+		AnimInstance->Montage_Play(Info.Montage);
 		CurrentPlayingMontage = AnimInstance->GetCurrentActiveMontage();
 	}
 }

@@ -53,6 +53,17 @@ void AROGAN::Tick(float DeltaTime)
 	
 	SmoothCameraRotation(DeltaTime);
 	CheckFalling();
+
+	if(bIsSprint && GetVelocity().Size2D() > 600.f)
+	{
+		SprintTime+=DeltaTime;
+	}
+	else
+	{
+		SprintTime = 0.f;
+	}
+
+	PrintEditorMessage(0.f,FString::Printf(TEXT("Sprint Time : %.2f"),SprintTime));
 }
 
 void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -254,12 +265,12 @@ void AROGAN::Attack()
 {
 	if(CombatComponent)
 	{
-		// TODO Sprint Attack 추가
-		/*if(GetVelocity().Size2D() > 680.f)
+		// TODO Dash Attack 추가
+		if(SprintTime > 0.1f)
 		{
-			PrintEditorMessage(3.f,"Sprint Attack");
-		}*/
-		CombatComponent->Attack();
+			CombatComponent->Attack("DashAttack");
+		}
+		CombatComponent->Attack("Fighter");
 	}
 }
 

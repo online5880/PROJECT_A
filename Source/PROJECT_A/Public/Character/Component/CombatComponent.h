@@ -31,11 +31,14 @@ public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// 공격
-	void Attack();
+	/**
+	 * @brief 공격
+	 * @param InfoName TMap<FString,FCombatMontageInfo> 의 Key
+	 */
+	void Attack(const FString& InfoName);
 protected:
 	// 파이터 공격
-	void PlayFighterMontage();
+	void PlayMontage(const FCombatMontageInfo& Info);
 	// 콤보 초기화
 	void ResetCombo();
 
@@ -81,15 +84,7 @@ private:
 	// Montage(이름, Asset) 및 MaxCombo 횟수 배열
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TMap<FString,FCombatMontageInfo> MontageInfos;
-
-	// 현재 MontageInfo
-	UPROPERTY()
-	FCombatMontageInfo CurrentMontageInfo;
-
-	/*// 파이터 Montage
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> FighterMontage;*/
-
+	
 	// 현재 재생중인 Montage
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CurrentPlayingMontage;
