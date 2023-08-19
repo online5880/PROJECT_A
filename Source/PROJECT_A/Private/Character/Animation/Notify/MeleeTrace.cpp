@@ -5,10 +5,8 @@
 
 #include "..\..\..\..\Public\GlobalUtilty.h"
 #include "Character/Component/CombatComponent.h"
-#include "Character/Enemy/EnemyBase.h"
 #include "Character/Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UMeleeTrace::UMeleeTrace()
@@ -19,80 +17,78 @@ UMeleeTrace::UMeleeTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 }
 
+void UMeleeTrace::CheckNearTarget(const USkeletalMeshComponent* MeshComp)
+{
+	const AActor* OwnerActor  = MeshComp->GetOwner();
+		
+	IgnoreActors.Emplace(MeshComp->GetOwner());
+
+	TArray<FHitResult> OverlapHitResults;
+	TArray<AActor*> OverlapActors;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType;
+	ObjectType.Add(EnemyObjectType);
+	
+	UKismetSystemLibrary::SphereTraceMultiForObjects(
+		MeshComp->GetWorld(),
+		MeshComp->GetComponentLocation(),
+		MeshComp->GetComponentLocation()+FVector(0.1f),
+		500.f,
+		ObjectType,
+		false,
+		IgnoreActors,
+		DrawDebugType(MeshComp),
+		OverlapHitResults,
+		true,
+		FLinearColor::Red,
+		FLinearColor::Green,
+		DebugTime(MeshComp));
+	
+	for (FHitResult& OverlapHitResult : OverlapHitResults)
+	{
+		const AActor* Actor = OverlapHitResult.GetActor();
+		if(Actor && !OverlapActors.Contains(Actor))
+		{
+			OverlapActors.Add(OverlapHitResult.GetActor());
+		}
+	}
+
+	// Sort(Distance)
+	OverlapActors.Sort([&](const AActor& A, const AActor& B)
+	{
+		return (A.GetActorLocation()- OwnerActor->GetActorLocation()).SizeSquared() <
+				(B.GetActorLocation()-OwnerActor->GetActorLocation()).SizeSquared();
+	});
+
+
+	// Debug
+	for (int i = 0; i < OverlapActors.Num(); ++i)
+	{
+		const AActor* Actor = OverlapActors[i];
+		FVector ActorLocation = Actor->GetActorLocation();
+		const float DistanceToPlayer = (ActorLocation - OwnerActor->GetActorLocation()).Size();
+		const float ColorIntensity = 1.0f - FMath::Clamp(DistanceToPlayer / 500.f, 0.0f, 1.0f);
+		
+		FColor DebugColor = FColor(255 * ColorIntensity, 0, 0);
+		DrawDebugSphere(
+			OverlapActors[i]->GetWorld(),
+			OverlapActors[i]->GetActorLocation(),
+			30.f,
+			8,
+			DebugColor,
+			false,
+			0.5f,0,1.f);
+	}
+}
+
 void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
-                               const FAnimNotifyEventReference& EventReference)
+                              const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	// 공격을 시작할 때 주변에 있는 액터를 배열에 저장
 	if(MeshComp->GetOwner())
 	{
-		IgnoreActors.Emplace(MeshComp->GetOwner());
-
-		TArray<FHitResult> OverlapHitResults;
-		TArray<AActor*> OverlapActors;
-		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType;
-		ObjectType.Add(EnemyObjectType);
-	
-		UKismetSystemLibrary::SphereTraceMultiForObjects(
-			MeshComp->GetWorld(),
-			MeshComp->GetComponentLocation(),
-			MeshComp->GetComponentLocation()+FVector(0.1f),
-			500.f,
-			ObjectType,
-			false,
-			IgnoreActors,
-			DrawDebugType(MeshComp),
-			OverlapHitResults,
-			true,
-			FLinearColor::Red,
-			FLinearColor::Green,
-			DebugTime(MeshComp));
-	
-		for (FHitResult& OverlapHitResult : OverlapHitResults)
-		{
-			const AActor* Actor = OverlapHitResult.GetActor();
-			if(Actor && !OverlapActors.Contains(Actor))
-			{
-				OverlapActors.Add(OverlapHitResult.GetActor());
-			}
-		}
-	
-		const AActor* OwnerActor  =MeshComp->GetOwner();
-		OverlapActors.Sort([&](const AActor& A, const AActor& B)
-		{
-			return (A.GetActorLocation()- OwnerActor->GetActorLocation()).SizeSquared() < (B.GetActorLocation()-OwnerActor->GetActorLocation()).SizeSquared();
-		});
-
-
-		for (int i = 0; i < OverlapActors.Num(); ++i)
-		{
-			const AActor* Actor = OverlapActors[i];
-			FVector ActorLocation = Actor->GetActorLocation();
-			const float DistanceToPlayer = (ActorLocation - OwnerActor->GetActorLocation()).Size();
-			const float ColorIntensity = 1.0f - FMath::Clamp(DistanceToPlayer / 500.f, 0.0f, 1.0f);
-		
-			FColor DebugColor = FColor(255 * ColorIntensity, 0, 0);
-			DrawDebugSphere(
-				OverlapActors[i]->GetWorld(),
-				OverlapActors[i]->GetActorLocation(),
-				30.f,
-				16,
-				DebugColor,
-				false,
-				1.f,0,1);
-		}
-		
-		/*if(OverlapActors[0])
-		{
-			const AActor* Target = OverlapActors[0];
-		
-			const float DotProduct = FVector::DotProduct(OwnerActor->GetActorLocation(),Target->GetActorLocation() - OwnerActor->GetActorLocation());
-			if(DotProduct > 0.4f)
-			{
-			
-			}
-		}*/
+		CheckNearTarget(MeshComp);
 	}
 }
 
@@ -213,7 +209,7 @@ void UMeleeTrace::ExecuteDamagedOnHitActors(const TSet<TObjectPtr<AActor>>& HitA
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(HitActor);
 			if(CombatInterface && CameraShakeClass)
 			{
-				CombatInterface->TakeDamage(AttackDamage,Normal,HitResult,AttackPower,DamageCauser,CameraShakeClass);
+				CombatInterface->TakeDamage(AttackDamage,Normal,HitResult,PushValue,DamageCauser,CameraShakeClass);
 				PlayAttackSound(HitActor->GetWorld());
 			}
 		}

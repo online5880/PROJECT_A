@@ -38,7 +38,7 @@ float UAttributeComponent::GetHealthPercentage() const
 	return (Health/MaxHealth);
 }
 
-void UAttributeComponent::Die() const
+void UAttributeComponent::Die()
 {
 	if(OwnerCharacter)
 	{
@@ -46,17 +46,21 @@ void UAttributeComponent::Die() const
 		OwnerCharacter->GetMesh()->SetCollisionProfileName("Ragdoll");
 		OwnerCharacter->GetMesh()->SetSimulatePhysics(true);
 		OwnerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		OwnerCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		OwnerCharacter->SetLifeSpan(5.f);
+		
 		if(WidgetComponent)
 		{
 			WidgetComponent->SetVisibility(false);
 		}
+		
+		bIsDead = true;
 	}
 }
 
 void UAttributeComponent::DecreaseHealth(const float Value)
 {
-	if(Health > 0.f)
+	if(Health > 0.f && !bIsDead)
 	{
 		Health-=Value;
 		

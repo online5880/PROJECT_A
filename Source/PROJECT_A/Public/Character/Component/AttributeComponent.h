@@ -38,6 +38,20 @@ protected:
 	 * @brief 현재 체력 디버깅 메시지
 	 */
 	void PrintCurrentHealth() const;
+
+	
+	/**
+	 * @brief 체력 퍼센트 구하기
+	 * @return 퍼센트
+	 */
+	UFUNCTION(BlueprintCallable , Category = "Function")
+	float GetHealthPercentage() const;
+
+	/**
+	 * @brief 죽음
+	 */
+	void Die();
+	
 private:
 	/**
 	 * @brief 컴포넌트 주인 캐릭터
@@ -53,17 +67,9 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth = 100.f;
 
-	/**
-	 * @brief 체력 퍼센트 구하기
-	 * @return 퍼센트
-	 */
-	UFUNCTION(BlueprintCallable , Category = "Function")
-	float GetHealthPercentage() const;
-
-	/**
-	 * @brief 죽음
-	 */
-	void Die() const;
+	// 죽었는지
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	bool bIsDead;
 
 public:
 	// Health Getter, Setter

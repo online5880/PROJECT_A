@@ -32,6 +32,8 @@ protected:
 	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override{}
 	virtual void EndDamaged() override{}
 
+	void PlayCameraShake(TSubclassOf<UCameraShakeBase> CameraShakeBase);
+
 #pragma endregion Component
 	// 모션 워핑 컴포넌트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))

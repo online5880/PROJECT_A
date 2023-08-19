@@ -18,6 +18,7 @@ class PROJECT_A_API UMeleeTrace : public UAnimNotifyState
 
 public:
 	UMeleeTrace();
+	void CheckNearTarget(const USkeletalMeshComponent* MeshComp);
 
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
@@ -90,7 +91,7 @@ private:
 
 	// 공격 파워(밀려지는 수치)
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Melee", meta = (AllowPrivateAccess = "true"))
-	float AttackPower = 500.f;
+	float PushValue = 500.f;
 
 	// 공격 데미지
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Melee", meta = (AllowPrivateAccess = "true"))

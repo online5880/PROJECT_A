@@ -25,7 +25,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
+	void ShowAttributeWidget();
+	
 	/**
 	 * @brief 초기화
 	 */
@@ -44,11 +46,15 @@ protected:
 	 * @return 맞은 방향
 	 */
 	EHitDirection GetHitDirection(const double& Degree) const;
-
+	
 	// Combat Interface
 	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
 	virtual void EndDamaged() override;
-	
+
+	/**
+	 * @brief Play React Montage
+	 * @param Section Montage Section
+	 */
 	void PlayReactMontage(const FName& Section) const;
 
 private:
@@ -59,5 +65,5 @@ private:
 	TSubclassOf<UUserWidget> AttributeWidgetClass;
 
 	UPROPERTY()
-	UAnimInstance* AnimInstance;
+	TObjectPtr<UAnimInstance> AnimInstance;
 };

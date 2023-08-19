@@ -2,7 +2,6 @@
 
 
 #include "Character/Enemy/EnemyBase.h"
-
 #include "GlobalUtilty.h"
 #include "Character/Component/AttributeComponent.h"
 #include "Character/Component/CombatComponent.h"
@@ -20,6 +19,7 @@ AEnemyBase::AEnemyBase()
 	AttributeWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Attribute Widget"));
 	AttributeWidget->SetupAttachment(GetRootComponent());
 	AttributeWidget->SetDrawAtDesiredSize(true);
+	AttributeWidget->SetVisibility(false);
 }
 
 void AEnemyBase::Init()
@@ -52,6 +52,14 @@ void AEnemyBase::Tick(float DeltaTime)
 void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AEnemyBase::ShowAttributeWidget()
+{
+	if(AttributeWidget)
+	{
+		AttributeWidget->SetVisibility(true);
+	}
 }
 
 void AEnemyBase::CalculateHitDegree(FHitResult const& HitInfo, double& Degree) const
@@ -93,27 +101,23 @@ EHitDirection AEnemyBase::GetHitDirection(const double& Degree) const
 	return HitDirection;
 }
 
+
 void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo,
                             const float PushValue, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
 {
 	if(!CombatComponent->GetCanDamaged())
 	{
+		ShowAttributeWidget();
 		CombatComponent->SetCanDamaged(true);
-
+		
 		// Push
 		const FVector LaunchDirection = Normal * FVector(1.f, 1.f, 0.f) * -PushValue;
 		LaunchCharacter(LaunchDirection, false, true);
-
-		/*// Damage
-		FTimerHandle TakeDamageTimer;
-		GetWorldTimerManager().SetTimer(TakeDamageTimer, [&, Damage]
-		{
-			
-		}, 0.0005f, false);*/
-
-		// Damage
+		
+		// Damaged
 		AttributeComponent->DecreaseHealth(Damage);
 
+		// Calc Degree
 		double Degree;
 		CalculateHitDegree(HitInfo, Degree);
 		const EHitDirection HitDirection = GetHitDirection(Degree);
@@ -124,7 +128,6 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 		{
 			MontageSection = *FString(KnockDown + GetEnumDisplayNameToString(HitDirection));
 		}
-			
 		PlayReactMontage(MontageSection);
 		
 		// Slow
@@ -135,12 +138,7 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 			UGameplayStatics::SetGlobalTimeDilation(GetWorld(),1.f);
 		},0.005f,false);
 
-		// CameraShake
-		APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
-		if(PlayerCameraManager && CameraShakeBase)
-		{
-			PlayerCameraManager->StartCameraShake(CameraShakeBase);
-		}
+		PlayCameraShake(CameraShakeBase);
 	}
 }
 

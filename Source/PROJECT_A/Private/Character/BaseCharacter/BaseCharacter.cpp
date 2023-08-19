@@ -7,6 +7,7 @@
 #include "Character/Component/ClimbComponent.h"
 #include "Character/Component/CombatComponent.h"
 #include "Character/Component/AttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -32,4 +33,13 @@ void ABaseCharacter::Tick(float DeltaTime)
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ABaseCharacter::PlayCameraShake(TSubclassOf<UCameraShakeBase> CameraShakeBase)
+{
+	APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+	if(PlayerCameraManager && CameraShakeBase)
+	{
+		PlayerCameraManager->StartCameraShake(CameraShakeBase);
+	}
 }
