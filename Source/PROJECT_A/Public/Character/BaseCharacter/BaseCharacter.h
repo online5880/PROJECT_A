@@ -51,6 +51,9 @@ protected:
 	TObjectPtr<UAttributeComponent> AttributeComponent;
 #pragma endregion Component
 
+	UPROPERTY()
+	TObjectPtr<AActor> Target;
+
 public:
 	FORCEINLINE TObjectPtr<UMotionWarpingComponent> GetMotionWarpingComponent() const {return MotionWarpingComponent;}
 	FORCEINLINE TObjectPtr<UClimbComponent> GetClimbComponent() const {return ClimbComponent;}

@@ -17,7 +17,7 @@ UMeleeTrace::UMeleeTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 }
 
-void UMeleeTrace::CheckNearTarget(const USkeletalMeshComponent* MeshComp)
+void UMeleeTrace::CheckNearTarget(const USkeletalMeshComponent* MeshComp, TArray<AActor*>& Targets)
 {
 	const AActor* OwnerActor  = MeshComp->GetOwner();
 		
@@ -59,7 +59,8 @@ void UMeleeTrace::CheckNearTarget(const USkeletalMeshComponent* MeshComp)
 				(B.GetActorLocation()-OwnerActor->GetActorLocation()).SizeSquared();
 	});
 
-
+	Targets = OverlapActors;
+	
 	// Debug
 	for (int i = 0; i < OverlapActors.Num(); ++i)
 	{
@@ -88,7 +89,8 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 	// 공격을 시작할 때 주변에 있는 액터를 배열에 저장
 	if(MeshComp->GetOwner())
 	{
-		CheckNearTarget(MeshComp);
+		TArray<AActor*> Targets;
+		CheckNearTarget(MeshComp,Targets);
 	}
 }
 

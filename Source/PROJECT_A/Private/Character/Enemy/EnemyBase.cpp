@@ -8,6 +8,7 @@
 #include "Character/Enum/HitDirection.h"
 #include "Character/Widget/EnemyAttributeWidget.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AEnemyBase::AEnemyBase()
 {
@@ -47,6 +48,7 @@ void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	LookTarget(DeltaTime);
 }
 
 void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -59,6 +61,16 @@ void AEnemyBase::ShowAttributeWidget()
 	if(AttributeWidget)
 	{
 		AttributeWidget->SetVisibility(true);
+	}
+}
+
+void AEnemyBase::LookTarget(float Delta)
+{
+	if(Target && !AnimInstance->IsAnyMontagePlaying())
+	{
+		const FRotator FindLookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),Target->GetActorLocation());
+		const FRotator InterpRot = UKismetMathLibrary::RInterpTo(GetActorRotation(),FindLookRotation,Delta,3.f);
+		SetActorRotation(InterpRot);
 	}
 }
 
@@ -107,6 +119,11 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 {
 	if(!CombatComponent->GetCanDamaged())
 	{
+		if(DamageCauser)
+		{
+			Target = DamageCauser;
+		}
+		
 		ShowAttributeWidget();
 		CombatComponent->SetCanDamaged(true);
 		
