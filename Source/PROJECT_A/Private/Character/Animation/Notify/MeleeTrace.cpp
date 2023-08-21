@@ -91,6 +91,14 @@ void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 	{
 		TArray<AActor*> Targets;
 		CheckNearTarget(MeshComp,Targets);
+		
+		ICombatInterface* CombatInterface = Cast<ICombatInterface>(MeshComp->GetOwner());
+		if(CombatInterface && Targets.Num() > 0)
+		{
+			AActor* Target = Targets[FMath::RandRange(0,Targets.Num()-1)];
+			CombatInterface->MoveToTarget(Target);
+		}
+		Targets.Empty();
 	}
 }
 
@@ -158,6 +166,7 @@ void UMeleeTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 	HitActors.Empty();
 	IgnoreActors.Empty();
 	HitResults.Empty();
+	CurrentTarget = nullptr;
 }
 
 FString UMeleeTrace::GetNotifyName_Implementation() const

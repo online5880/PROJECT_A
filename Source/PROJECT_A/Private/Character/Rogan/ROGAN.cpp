@@ -284,3 +284,23 @@ void AROGAN::EndDamaged()
 {
 	
 }
+
+void AROGAN::MoveToTarget(AActor* Target)
+{
+	if(Target)
+	{
+		const FName WarpName = FName("MeleeAttack");
+		const FVector TargetLocation = Target->GetActorLocation();
+		const FVector ActorLocation = GetActorLocation();
+		const FVector ForwardVector = UKismetMathLibrary::FindLookAtRotation(TargetLocation,ActorLocation).Vector();
+		const FVector TargetForwardLocation = TargetLocation+(ForwardVector*50.f);
+		const FVector WarpLocation = FVector(TargetForwardLocation.X,TargetForwardLocation.Y,GetActorLocation().Z);
+		DrawDebugSphere(GetWorld(),Target->GetActorLocation(),30.f,8,FColor::Orange,false,3.f,0,1);
+		FRotator LookTargetRot = UKismetMathLibrary::FindLookAtRotation(ActorLocation,TargetLocation);
+		LookTargetRot.Roll = 0;
+		LookTargetRot.Pitch = 0;
+
+		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(WarpName,WarpLocation,LookTargetRot);
+	}
+}

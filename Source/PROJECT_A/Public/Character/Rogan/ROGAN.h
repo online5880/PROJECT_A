@@ -53,6 +53,7 @@ protected:
 	// Interface
 	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
 	virtual void EndDamaged() override;
+	virtual void MoveToTarget(AActor* Target) override;
 
 private:
 	

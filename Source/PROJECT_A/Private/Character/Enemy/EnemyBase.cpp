@@ -66,9 +66,9 @@ void AEnemyBase::ShowAttributeWidget()
 
 void AEnemyBase::LookTarget(float Delta)
 {
-	if(Target && !AnimInstance->IsAnyMontagePlaying())
+	if(TargetActor && !AnimInstance->IsAnyMontagePlaying())
 	{
-		const FRotator FindLookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),Target->GetActorLocation());
+		const FRotator FindLookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),TargetActor->GetActorLocation());
 		const FRotator InterpRot = UKismetMathLibrary::RInterpTo(GetActorRotation(),FindLookRotation,Delta,3.f);
 		SetActorRotation(InterpRot);
 	}
@@ -121,7 +121,7 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 	{
 		if(DamageCauser)
 		{
-			Target = DamageCauser;
+			TargetActor = DamageCauser;
 		}
 		
 		ShowAttributeWidget();

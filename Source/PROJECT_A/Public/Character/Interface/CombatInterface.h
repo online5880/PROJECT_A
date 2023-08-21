@@ -37,4 +37,6 @@ public:
 	 * @brief 데미지 받는게 끝남
 	 */
 	virtual void EndDamaged() = 0;
+
+	virtual void MoveToTarget(AActor* Target){}
 };
