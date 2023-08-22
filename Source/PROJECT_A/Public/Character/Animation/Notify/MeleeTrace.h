@@ -18,7 +18,6 @@ class PROJECT_A_API UMeleeTrace : public UAnimNotifyState
 
 public:
 	UMeleeTrace();
-	void CheckNearTarget(const USkeletalMeshComponent* MeshComp,TArray<AActor*>& Targets);
 
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;

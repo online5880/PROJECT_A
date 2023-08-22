@@ -17,88 +17,14 @@ UMeleeTrace::UMeleeTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 }
 
-void UMeleeTrace::CheckNearTarget(const USkeletalMeshComponent* MeshComp, TArray<AActor*>& Targets)
-{
-	const AActor* OwnerActor  = MeshComp->GetOwner();
-		
-	IgnoreActors.Emplace(MeshComp->GetOwner());
-
-	TArray<FHitResult> OverlapHitResults;
-	TArray<AActor*> OverlapActors;
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType;
-	ObjectType.Add(EnemyObjectType);
-	
-	UKismetSystemLibrary::SphereTraceMultiForObjects(
-		MeshComp->GetWorld(),
-		MeshComp->GetComponentLocation(),
-		MeshComp->GetComponentLocation()+FVector(0.1f),
-		500.f,
-		ObjectType,
-		false,
-		IgnoreActors,
-		DrawDebugType(MeshComp),
-		OverlapHitResults,
-		true,
-		FLinearColor::Red,
-		FLinearColor::Green,
-		DebugTime(MeshComp));
-	
-	for (FHitResult& OverlapHitResult : OverlapHitResults)
-	{
-		const AActor* Actor = OverlapHitResult.GetActor();
-		if(Actor && !OverlapActors.Contains(Actor))
-		{
-			OverlapActors.Add(OverlapHitResult.GetActor());
-		}
-	}
-
-	// Sort(Distance)
-	OverlapActors.Sort([&](const AActor& A, const AActor& B)
-	{
-		return (A.GetActorLocation()- OwnerActor->GetActorLocation()).SizeSquared() <
-				(B.GetActorLocation()-OwnerActor->GetActorLocation()).SizeSquared();
-	});
-
-	Targets = OverlapActors;
-	
-	// Debug
-	for (int i = 0; i < OverlapActors.Num(); ++i)
-	{
-		const AActor* Actor = OverlapActors[i];
-		FVector ActorLocation = Actor->GetActorLocation();
-		const float DistanceToPlayer = (ActorLocation - OwnerActor->GetActorLocation()).Size();
-		const float ColorIntensity = 1.0f - FMath::Clamp(DistanceToPlayer / 500.f, 0.0f, 1.0f);
-		
-		FColor DebugColor = FColor(255 * ColorIntensity, 0, 0);
-		DrawDebugSphere(
-			OverlapActors[i]->GetWorld(),
-			OverlapActors[i]->GetActorLocation(),
-			30.f,
-			8,
-			DebugColor,
-			false,
-			0.5f,0,1.f);
-	}
-}
-
 void UMeleeTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
                               const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	// 공격을 시작할 때 주변에 있는 액터를 배열에 저장
-	if(MeshComp->GetOwner())
+	if(MeshComp)
 	{
-		TArray<AActor*> Targets;
-		CheckNearTarget(MeshComp,Targets);
-		
-		ICombatInterface* CombatInterface = Cast<ICombatInterface>(MeshComp->GetOwner());
-		if(CombatInterface && Targets.Num() > 0)
-		{
-			AActor* Target = Targets[FMath::RandRange(0,Targets.Num()-1)];
-			CombatInterface->MoveToTarget(Target);
-		}
-		Targets.Empty();
+		IgnoreActors.Emplace(MeshComp->GetOwner());	
 	}
 }
 
@@ -166,7 +92,6 @@ void UMeleeTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 	HitActors.Empty();
 	IgnoreActors.Empty();
 	HitResults.Empty();
-	CurrentTarget = nullptr;
 }
 
 FString UMeleeTrace::GetNotifyName_Implementation() const

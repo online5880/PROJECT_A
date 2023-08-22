@@ -11,8 +11,17 @@ struct FCombatMontageInfo
 {
 	GENERATED_BODY()
 public:
+	FCombatMontageInfo() :
+	Montage(nullptr),
+	PlayRate(1.f),
+	MaxComboCount(0)
+	{}
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> Montage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PlayRate;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxComboCount;

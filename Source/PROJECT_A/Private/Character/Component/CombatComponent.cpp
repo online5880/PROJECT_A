@@ -37,7 +37,6 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UCombatComponent::Attack(const FString& InfoName)
 {
-	// TODO Fighter 는 임시
 	const FCombatMontageInfo CurrentMontageInfo = GetMontageInfo(InfoName);
 	// Max ComboCount 까지 증가
 	ComboCount = FMath::Clamp(++ComboCount, 1, CurrentMontageInfo.MaxComboCount);
@@ -51,7 +50,7 @@ void UCombatComponent::PlayMontage(const FCombatMontageInfo& Info)
 {
 	if(Info.Montage && AnimInstance)
 	{
-		AnimInstance->Montage_Play(Info.Montage);
+		AnimInstance->Montage_Play(Info.Montage,Info.PlayRate);
 		CurrentPlayingMontage = AnimInstance->GetCurrentActiveMontage();
 	}
 }
