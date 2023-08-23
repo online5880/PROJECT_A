@@ -4,6 +4,7 @@
 #include "Character/Animation/Notify/NotifyState_MeleeMotionWarping.h"
 
 #include "GlobalUtilty.h"
+#include "MotionWarpingComponent.h"
 #include "Character/Interface/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -11,17 +12,16 @@ void UNotifyState_MeleeMotionWarping::NotifyBegin(USkeletalMeshComponent* MeshCo
                                                   float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
-
+	
 	TArray<AActor*> Targets = FindNearTarget(MeshComp);
 
 	// 공격을 시작할 때 주변에 있는 액터를 배열에 저장
 	if(MeshComp->GetOwner())
 	{
 		ICombatInterface* CombatInterface = Cast<ICombatInterface>(MeshComp->GetOwner());
-		if(CombatInterface && Targets.Num() > 0)
+		if(CombatInterface)
 		{
-			AActor* Target = Targets[FMath::RandRange(0,Targets.Num()-1)];
-			CombatInterface->MoveToTarget(Target);
+			CombatInterface->MoveToTargets(Targets);
 		}
 	}
 }
@@ -100,5 +100,7 @@ TArray<AActor*> UNotifyState_MeleeMotionWarping::FindNearTarget(const USkeletalM
 			0.5f,0,1.f);
 	}
 
-	return OverlapActors;
+	if(OverlapActors.Num() > 0) {return OverlapActors;}
+
+	return TArray<AActor*>();
 }

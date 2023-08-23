@@ -287,19 +287,36 @@ void AROGAN::EndDamaged()
 
 void AROGAN::MoveToTarget(AActor* Target)
 {
-	if(Target)
-	{
-		const FName WarpName = FName("MeleeAttack");
-		const FVector TargetLocation = Target->GetActorLocation();
-		const FVector ActorLocation = GetActorLocation();
-		const FVector ForwardVector = UKismetMathLibrary::FindLookAtRotation(TargetLocation,ActorLocation).Vector();
-		const FVector TargetForwardLocation = TargetLocation+(ForwardVector*40.f);
-		const FVector WarpLocation = FVector(TargetForwardLocation.X,TargetForwardLocation.Y,GetActorLocation().Z);
-		FRotator LookTargetRot = UKismetMathLibrary::FindLookAtRotation(ActorLocation,TargetLocation);
-		LookTargetRot.Roll = 0;
-		LookTargetRot.Pitch = 0;
+	
+}
 
-		//GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(WarpName,WarpLocation,LookTargetRot);
+void AROGAN::MoveToTargets(TArray<AActor*> Targets)
+{
+	if(Targets.Num() > 0 )
+	{
+		AActor* Target = Targets[FMath::RandRange(0, Targets.Num() - 1)];
+		if(Target)
+		{
+			const FVector TargetLocation = Target->GetActorLocation();
+			const FVector ActorLocation = GetActorLocation();
+			const FVector ForwardVector = UKismetMathLibrary::FindLookAtRotation(TargetLocation,ActorLocation).Vector();
+			const FVector TargetForwardLocation = TargetLocation+(ForwardVector*40.f);
+			const FVector WarpLocation = FVector(TargetForwardLocation.X,TargetForwardLocation.Y,GetActorLocation().Z);
+			FRotator LookTargetRot = UKismetMathLibrary::FindLookAtRotation(ActorLocation,TargetLocation);
+			LookTargetRot.Roll = 0;
+			LookTargetRot.Pitch = 0;
+
+			//GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+			FMotionWarpingTarget WarpingTarget;
+			WarpingTarget.Name = FName("MeleeAttack");
+			WarpingTarget.Location = WarpLocation;
+			WarpingTarget.Rotation = LookTargetRot;
+		
+			MotionWarpingComponent->AddOrUpdateWarpTarget(WarpingTarget);
+		}
+	}
+	else
+	{
+		MotionWarpingComponent->RemoveWarpTarget(FName("MeleeAttack"));
 	}
 }

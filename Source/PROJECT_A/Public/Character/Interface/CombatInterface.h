@@ -39,4 +39,5 @@ public:
 	virtual void EndDamaged() = 0;
 
 	virtual void MoveToTarget(AActor* Target){}
+	virtual void MoveToTargets(TArray<AActor*> Targets){}
 };
