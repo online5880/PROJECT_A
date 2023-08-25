@@ -9,6 +9,7 @@
 #include "Character/Animation/ROGANAnimInstance.h"
 #include "Character/Component/ClimbComponent.h"
 #include "Character/Component/CombatComponent.h"
+#include "Character/Component/TargetLockComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -84,6 +85,7 @@ void AROGAN::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AROGAN::Jump);
 		EnhancedInputComponent->BindAction(JumpAction,ETriggerEvent::Completed,this,&AROGAN::StopJumping);
 		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&AROGAN::Attack);
+		EnhancedInputComponent->BindAction(TargetLockAction,ETriggerEvent::Triggered,this,&AROGAN::TargetLock);
 	}
 }
 
@@ -274,8 +276,16 @@ void AROGAN::Attack()
 	}
 }
 
+void AROGAN::TargetLock()
+{
+	if(TargetLockComponent)
+	{
+		TargetLockComponent->TargetLock();
+	}
+}
+
 void AROGAN::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue,
-	AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
+                        AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
 {
 	Super::TakeDamage(Damage, Normal, HitInfo, PushValue, DamageCauser, CameraShakeBase);
 }

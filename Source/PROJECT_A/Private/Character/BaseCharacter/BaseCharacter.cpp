@@ -7,6 +7,7 @@
 #include "Character/Component/ClimbComponent.h"
 #include "Character/Component/CombatComponent.h"
 #include "Character/Component/AttributeComponent.h"
+#include "Character/Component/TargetLockComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -18,6 +19,7 @@ ABaseCharacter::ABaseCharacter()
 	ClimbComponent = CreateDefaultSubobject<UClimbComponent>(TEXT("Climb Component"));
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("Status Component"));
+	TargetLockComponent = CreateDefaultSubobject<UTargetLockComponent>(TEXT("TargetLock Component"));
 }
 
 void ABaseCharacter::BeginPlay()

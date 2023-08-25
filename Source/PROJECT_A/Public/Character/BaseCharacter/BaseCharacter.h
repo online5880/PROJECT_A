@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+class UTargetLockComponent;
 class UAttributeComponent;
 class AROGAN;
 class AEnemyBase;
@@ -33,6 +34,10 @@ protected:
 	virtual void EndDamaged() override{}
 	virtual void MoveToTarget(AActor* Target) override{}
 
+	/**
+	 * @brief 카메라 흔들림
+	 * @param CameraShakeBase TSubclassOf<UCameraShakeBase>
+	 */
 	void PlayCameraShake(TSubclassOf<UCameraShakeBase> CameraShakeBase);
 
 #pragma endregion Component
@@ -48,8 +53,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCombatComponent> CombatComponent;
 
+	// 속성 컴포넌트(체력)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAttributeComponent> AttributeComponent;
+
+	// 타겟락 컴포넌트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UTargetLockComponent> TargetLockComponent;
 #pragma endregion Component
 
 	UPROPERTY()

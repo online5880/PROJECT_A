@@ -50,6 +50,9 @@ protected:
 	// Combat
 	void Attack();
 
+	// TargetLock
+	void TargetLock();
+
 	// Interface
 	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
 	virtual void EndDamaged() override;
@@ -108,6 +111,10 @@ private:
 	// 공격 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> AttackAction;
+
+	// 공격 액션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> TargetLockAction;
 #pragma endregion InputAction
 
 #pragma region Movement Variables

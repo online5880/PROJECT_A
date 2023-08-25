@@ -14,8 +14,6 @@ class PROJECT_A_API UNotifyState_MeleeMotionWarping : public UAnimNotifyState_Mo
 {
 	GENERATED_BODY()
 
-public:
-
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 
@@ -23,5 +21,10 @@ protected:
 
 	virtual FString GetNotifyName_Implementation() const override;
 
+	/**
+	 * @brief 근처 타겟 검색
+	 * @param MeshComp MeshComp
+	 * @return TArray<AActor*> 탐색 액터 배열
+	 */
 	TArray<AActor*> FindNearTarget(const USkeletalMeshComponent* MeshComp) const;
 };

@@ -21,7 +21,7 @@ void UNotifyState_MeleeMotionWarping::NotifyBegin(USkeletalMeshComponent* MeshCo
 		ICombatInterface* CombatInterface = Cast<ICombatInterface>(MeshComp->GetOwner());
 		if(CombatInterface)
 		{
-			CombatInterface->MoveToTargets(Targets);
+			//CombatInterface->MoveToTargets(Targets);
 		}
 	}
 }
