@@ -75,11 +75,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UROGANAnimInstance> AnimInstance;
 
+#pragma region InputAction
 	// 맵핑 콘텍스트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
-
-#pragma region InputAction
+	
 	// 점프 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
@@ -118,7 +118,6 @@ private:
 #pragma endregion InputAction
 
 #pragma region Movement Variables
-
 	// Movement State(Enum)
 	UPROPERTY()
 	ECharacterMovementState MovementState;

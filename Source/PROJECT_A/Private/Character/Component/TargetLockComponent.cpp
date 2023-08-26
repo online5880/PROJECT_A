@@ -4,6 +4,7 @@
 #include "Character/Component/TargetLockComponent.h"
 
 #include "GlobalUtilty.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -57,8 +58,15 @@ void UTargetLockComponent::RotateCamera(float DeltaTime) const
 
 void UTargetLockComponent::TargetLock()
 {
-	bIsTargetLock = !bIsTargetLock;
-	if(bIsTargetLock) {TargetActor = nullptr;}
+	// TODO 로직 수정해야함.
+	if(bIsTargetLock && TargetActor)
+	{
+		TargetActor = nullptr;
+	}
+	else
+	{
+		PrintEditorMessage(3.f,"TargetLock");
+	}
 	SearchSphereTrace();
 }
 

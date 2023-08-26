@@ -40,4 +40,6 @@ public:
 
 	virtual void MoveToTarget(AActor* Target){}
 	virtual void MoveToTargets(TArray<AActor*> Targets){}
+
+	virtual void TargetLock(){}
 };

@@ -3,6 +3,7 @@
 
 #include "Character/Enemy/EnemyBase.h"
 #include "GlobalUtilty.h"
+#include "NiagaraComponent.h"
 #include "Character/Component/AttributeComponent.h"
 #include "Character/Component/CombatComponent.h"
 #include "Character/Enum/HitDirection.h"

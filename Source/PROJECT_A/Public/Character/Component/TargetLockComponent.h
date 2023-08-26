@@ -4,13 +4,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "TargetLockComponent.generated.h"
-
+class UNiagaraSystem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_A_API UTargetLockComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
+	
 public:	
 	UTargetLockComponent();
 
@@ -56,4 +56,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AActor> TargetActor;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Effect",meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UNiagaraSystem> TargetLockEffect;
 };

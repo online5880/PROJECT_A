@@ -6,6 +6,7 @@
 #include "Character/BaseCharacter/BaseCharacter.h"
 #include "EnemyBase.generated.h"
 
+class UNiagaraComponent;
 enum class EHitDirection : uint8;
 class UWidgetComponent;
 class UUserWidget;
@@ -27,7 +28,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	void ShowAttributeWidget();
-
+	
 	void LookTarget(float Delta);
 	
 	/**
@@ -62,10 +63,10 @@ protected:
 private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Widget", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> AttributeWidget;
-
+	
 	UPROPERTY()
 	TSubclassOf<UUserWidget> AttributeWidgetClass;
-
+	
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
 };
