@@ -4,6 +4,7 @@
 #include "Character/Component/AttributeComponent.h"
 
 #include "..\..\..\Public\GlobalUtilty.h"
+#include "Character/Component/TargetLockComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
@@ -43,6 +44,7 @@ void UAttributeComponent::Die()
 	if(OwnerCharacter)
 	{
 		UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(OwnerCharacter->GetComponentByClass(UWidgetComponent::StaticClass()));
+		const UTargetLockComponent* TargetLockComponent = Cast<UTargetLockComponent>(OwnerCharacter->GetComponentByClass(UTargetLockComponent::StaticClass()));
 		OwnerCharacter->GetMesh()->SetCollisionProfileName("Ragdoll");
 		OwnerCharacter->GetMesh()->SetSimulatePhysics(true);
 		OwnerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

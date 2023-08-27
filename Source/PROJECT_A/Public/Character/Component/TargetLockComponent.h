@@ -4,7 +4,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "TargetLockComponent.generated.h"
+class UNiagaraComponent;
 class UNiagaraSystem;
+DECLARE_DELEGATE(FDisableTargetLockDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_A_API UTargetLockComponent : public UActorComponent
@@ -15,6 +17,9 @@ public:
 	UTargetLockComponent();
 
 	void TargetLock();
+
+	FDisableTargetLockDelegate DisableTargetLockDelegate;
+	
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
@@ -30,8 +35,9 @@ protected:
 	 * @param DeltaTime DeltaTime
 	 */
 	void RotateCamera(float DeltaTime) const;
-	
-	void SearchSphereTrace();
+	void DisableTargetLock();
+
+	void SearchTarget();
 private:
 	/**
 	 * @brief Target Lock 이 걸렸는지
@@ -59,4 +65,7 @@ private:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Effect",meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UNiagaraSystem> TargetLockEffect;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> Effect;
 };

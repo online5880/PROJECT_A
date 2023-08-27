@@ -4,6 +4,7 @@
 #include "Character/Component/TargetLockComponent.h"
 
 #include "GlobalUtilty.h"
+#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -19,6 +20,14 @@ void UTargetLockComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	RotateCamera(DeltaTime);
+
+	if(TargetActor && OwnerActor && bIsTargetLock && Effect)
+	{
+		const FVector EffectLocation = TargetActor->GetRootComponent()->GetComponentLocation()
+		+FVector(0.f,0.f,TargetActor->GetRootComponent()->GetComponentLocation().Z*1.1f);
+		
+		Effect->SetWorldLocation(EffectLocation);
+	}
 }
 
 void UTargetLockComponent::BeginPlay()
@@ -34,6 +43,21 @@ void UTargetLockComponent::Init()
 	{
 		OwnerActor = GetOwner();
 	}
+	
+	if(TargetLockEffect)
+	{
+		Effect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			OwnerActor->GetWorld(),
+			TargetLockEffect,
+			FVector::ZeroVector);
+		
+		if(Effect)
+		{
+			Effect->SetVisibility(false);
+		}
+	}
+
+	DisableTargetLockDelegate.BindUObject(this,&UTargetLockComponent::DisableTargetLock);
 }
 
 void UTargetLockComponent::RotateCamera(float DeltaTime) const
@@ -56,21 +80,24 @@ void UTargetLockComponent::RotateCamera(float DeltaTime) const
 }
 
 
-void UTargetLockComponent::TargetLock()
+void UTargetLockComponent::DisableTargetLock()
 {
-	// TODO 로직 수정해야함.
-	if(bIsTargetLock && TargetActor)
-	{
-		TargetActor = nullptr;
-	}
-	else
-	{
-		PrintEditorMessage(3.f,"TargetLock");
-	}
-	SearchSphereTrace();
+	TargetActor = nullptr;
+	Effect->SetVisibility(false);
+	PrintEditorMessage(3.f,"Binding DisableTargetLock");
 }
 
-void UTargetLockComponent::SearchSphereTrace()
+void UTargetLockComponent::TargetLock()
+{
+	if(bIsTargetLock && TargetActor && Effect)
+	{
+		DisableTargetLockDelegate.ExecuteIfBound();
+		return;
+	}
+	SearchTarget();
+}
+
+void UTargetLockComponent::SearchTarget()
 {
 	if(OwnerActor)
 	{
@@ -88,7 +115,7 @@ void UTargetLockComponent::SearchSphereTrace()
 			TArray<AActor*> IgnoreActors;
 			IgnoreActors.Emplace(OwnerActor);
 			FHitResult HitResult;
-
+			
 			UKismetSystemLibrary::SphereTraceSingleForObjects(
 			World,
 			Start,
@@ -107,9 +134,11 @@ void UTargetLockComponent::SearchSphereTrace()
 			if(HitResult.bBlockingHit)
 			{
 				AActor* Target = HitResult.GetActor();
-				if(Target)
+				if(Target && Effect)
 				{
 					TargetActor = Target;
+					bIsTargetLock = true;
+					Effect->SetVisibility(true);
 				}
 			}
 		}

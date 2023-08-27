@@ -51,7 +51,7 @@ protected:
 	void Attack();
 
 	// TargetLock
-	void TargetLock();
+	virtual void TargetLock() override;
 
 	// Interface
 	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
