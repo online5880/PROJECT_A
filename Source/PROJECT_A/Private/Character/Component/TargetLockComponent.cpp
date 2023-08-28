@@ -82,16 +82,23 @@ void UTargetLockComponent::RotateCamera(float DeltaTime) const
 
 void UTargetLockComponent::DisableTargetLock()
 {
-	TargetActor = nullptr;
-	Effect->SetVisibility(false);
-	PrintEditorMessage(3.f,"Binding DisableTargetLock");
+	if(Effect)
+	{
+		Effect->SetVisibility(false);	
+	}
+	if(TargetActor)
+	{
+		TargetActor = nullptr;
+	}
+	bIsTargetLock = false;
+	PrintEditorMessage(3.f,"DisableTargetLock");
 }
 
 void UTargetLockComponent::TargetLock()
 {
 	if(bIsTargetLock && TargetActor && Effect)
 	{
-		DisableTargetLockDelegate.ExecuteIfBound();
+		DisableTargetLock();
 		return;
 	}
 	SearchTarget();

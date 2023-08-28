@@ -35,6 +35,8 @@ protected:
 	 * @param DeltaTime DeltaTime
 	 */
 	void RotateCamera(float DeltaTime) const;
+	
+	UFUNCTION()
 	void DisableTargetLock();
 
 	void SearchTarget();

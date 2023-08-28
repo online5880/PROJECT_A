@@ -51,6 +51,8 @@ void UAttributeComponent::Die()
 		OwnerCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		OwnerCharacter->SetLifeSpan(5.f);
 		
+		TargetLockComponent->DisableTargetLockDelegate.ExecuteIfBound();
+		
 		if(WidgetComponent)
 		{
 			WidgetComponent->SetVisibility(false);
