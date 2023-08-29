@@ -133,7 +133,7 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 		LaunchCharacter(LaunchDirection, false, true);
 		
 		// Damaged
-		AttributeComponent->DecreaseHealth(Damage);
+		AttributeComponent->DecreaseHealth(Damage,DamageCauser);
 
 		// Calc Degree
 		double Degree;

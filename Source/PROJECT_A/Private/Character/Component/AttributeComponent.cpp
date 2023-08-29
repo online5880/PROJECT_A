@@ -41,10 +41,10 @@ float UAttributeComponent::GetHealthPercentage() const
 
 void UAttributeComponent::Die()
 {
-	if(OwnerCharacter)
+	if(OwnerCharacter && DamageCauserActor)
 	{
 		UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(OwnerCharacter->GetComponentByClass(UWidgetComponent::StaticClass()));
-		const UTargetLockComponent* TargetLockComponent = Cast<UTargetLockComponent>(OwnerCharacter->GetComponentByClass(UTargetLockComponent::StaticClass()));
+		const UTargetLockComponent* TargetLockComponent = Cast<UTargetLockComponent>(DamageCauserActor->GetComponentByClass(UTargetLockComponent::StaticClass()));
 		OwnerCharacter->GetMesh()->SetCollisionProfileName("Ragdoll");
 		OwnerCharacter->GetMesh()->SetSimulatePhysics(true);
 		OwnerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -62,8 +62,9 @@ void UAttributeComponent::Die()
 	}
 }
 
-void UAttributeComponent::DecreaseHealth(const float Value)
+void UAttributeComponent::DecreaseHealth(const float Value, AActor* DamageCauser)
 {
+	DamageCauserActor = DamageCauser;
 	if(Health > 0.f && !bIsDead)
 	{
 		Health-=Value;

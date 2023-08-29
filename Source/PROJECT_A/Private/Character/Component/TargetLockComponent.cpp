@@ -84,7 +84,7 @@ void UTargetLockComponent::DisableTargetLock()
 {
 	if(Effect)
 	{
-		Effect->SetVisibility(false);	
+		Effect->SetVisibility(false);
 	}
 	if(TargetActor)
 	{
@@ -96,7 +96,8 @@ void UTargetLockComponent::DisableTargetLock()
 
 void UTargetLockComponent::TargetLock()
 {
-	if(bIsTargetLock && TargetActor && Effect)
+	const bool bCanTargetLock = bIsTargetLock && TargetActor && Effect;
+	if(bCanTargetLock)
 	{
 		DisableTargetLock();
 		return;

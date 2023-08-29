@@ -18,8 +18,9 @@ public:
 	/**
 	 * @brief 체력 감소
 	 * @param Value 값
+	 * @param DamageCauser 데미지 주는 액터
 	 */
-	void DecreaseHealth(const float Value);
+	void DecreaseHealth(const float Value,AActor* DamageCauser);
 	/**
 	 * @brief 체력 증가
 	 * @param Value 값
@@ -70,6 +71,9 @@ private:
 	// 죽었는지
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	bool bIsDead;
+
+	UPROPERTY()
+	TObjectPtr<AActor> DamageCauserActor;
 
 public:
 	// Health Getter, Setter
