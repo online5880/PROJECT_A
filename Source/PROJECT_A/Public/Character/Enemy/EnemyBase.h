@@ -26,9 +26,16 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
+	/**
+	 * @brief Attribute Widget Visible
+	 */
 	void ShowAttributeWidget();
-	
+
+	/**
+	 * @brief 타겟이 있으면 타겟을 바라봄
+	 * @param Delta DeltaTime
+	 */
 	void LookTarget(float Delta);
 	
 	/**
@@ -49,7 +56,8 @@ protected:
 	 * @return 맞은 방향
 	 */
 	EHitDirection GetHitDirection(const double& Degree) const;
-	
+	void SetDamageCauser(AActor* DamageCauser);
+
 	// Combat Interface
 	virtual void TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo, const float PushValue, AActor* DamageCauser,TSubclassOf<UCameraShakeBase> CameraShakeBase = nullptr) override;
 	virtual void EndDamaged() override;

@@ -21,13 +21,7 @@ void UTargetLockComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 	RotateCamera(DeltaTime);
 
-	if(TargetActor && OwnerActor && bIsTargetLock && Effect)
-	{
-		const FVector EffectLocation = TargetActor->GetRootComponent()->GetComponentLocation()
-		+FVector(0.f,0.f,TargetActor->GetRootComponent()->GetComponentLocation().Z*1.1f);
-		
-		Effect->SetWorldLocation(EffectLocation);
-	}
+	SetEffectLocation();
 }
 
 void UTargetLockComponent::BeginPlay()
@@ -44,6 +38,24 @@ void UTargetLockComponent::Init()
 		OwnerActor = GetOwner();
 	}
 	
+	ActivateEffect();
+
+	DisableTargetLockDelegate.BindUObject(this,&UTargetLockComponent::DisableTargetLock);
+}
+
+void UTargetLockComponent::SetEffectLocation() const
+{
+	if(TargetActor && OwnerActor && bIsTargetLock && Effect)
+	{
+		const FVector EffectLocation = TargetActor->GetRootComponent()->GetComponentLocation()
+			+FVector(0.f,0.f,TargetActor->GetRootComponent()->GetComponentLocation().Z*1.1f);
+		
+		Effect->SetWorldLocation(EffectLocation);
+	}
+}
+
+void UTargetLockComponent::ActivateEffect()
+{
 	if(TargetLockEffect)
 	{
 		Effect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
@@ -56,8 +68,17 @@ void UTargetLockComponent::Init()
 			Effect->SetVisibility(false);
 		}
 	}
+}
 
-	DisableTargetLockDelegate.BindUObject(this,&UTargetLockComponent::DisableTargetLock);
+void UTargetLockComponent::TargetLock()
+{
+	const bool bCanTargetLock = bIsTargetLock && TargetActor && Effect;
+	if(bCanTargetLock)
+	{
+		DisableTargetLock();
+		return;
+	}
+	SearchTarget();
 }
 
 void UTargetLockComponent::RotateCamera(float DeltaTime) const
@@ -91,18 +112,6 @@ void UTargetLockComponent::DisableTargetLock()
 		TargetActor = nullptr;
 	}
 	bIsTargetLock = false;
-	PrintEditorMessage(3.f,"DisableTargetLock");
-}
-
-void UTargetLockComponent::TargetLock()
-{
-	const bool bCanTargetLock = bIsTargetLock && TargetActor && Effect;
-	if(bCanTargetLock)
-	{
-		DisableTargetLock();
-		return;
-	}
-	SearchTarget();
 }
 
 void UTargetLockComponent::SearchTarget()
@@ -115,7 +124,7 @@ void UTargetLockComponent::SearchTarget()
 		if(CameraManager)
 		{
 			FVector ForwardVector = CameraManager->GetCameraRotation().Vector();
-			FVector Start = OwnerActor->GetActorLocation();
+			FVector Start = OwnerActor->GetActorLocation()+OwnerActor->GetActorForwardVector()*SearchSphereRadius;
 			FVector End = Start+(ForwardVector*SearchDistance);
 
 			TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType;

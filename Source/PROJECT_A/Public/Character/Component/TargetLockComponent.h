@@ -15,30 +15,49 @@ class PROJECT_A_API UTargetLockComponent : public UActorComponent
 	
 public:	
 	UTargetLockComponent();
-
-	void TargetLock();
-
+	
 	FDisableTargetLockDelegate DisableTargetLockDelegate;
 	
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	virtual void BeginPlay() override;
-	
+
 	/**
-	 * @brief 초기화
-	 */
+	* @brief 초기화
+	*/
 	void Init();
 
+	/**
+	 * @brief 이펙트 위치
+	 */
+	void SetEffectLocation() const;
+	
+	/**
+	 * @brief 이펙트 활성화
+	 */
+	void ActivateEffect();
+
+	/**
+	 * @brief 타겟락
+	 */
+	void TargetLock();
+	
 	/**
 	 * @brief 카메라 회전
 	 * @param DeltaTime DeltaTime
 	 */
 	void RotateCamera(float DeltaTime) const;
-	
+
+	/**
+	 * @brief 타겟 락 비활성화
+	 */
 	UFUNCTION()
 	void DisableTargetLock();
 
+	/**
+	 * @brief 타겟 탐색
+	 */
 	void SearchTarget();
 private:
 	/**
@@ -59,12 +78,22 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category= "Lock", meta = (AllowPrivateAccess = "true"))
 	float SearchSphereRadius = 125.f;
 
+
+	/**
+	 * @brief 컴포넌트 오너 액터
+	 */
 	UPROPERTY()
 	TObjectPtr<AActor> OwnerActor;
 
+	/**
+	 * @brief 타겟 액터
+	 */
 	UPROPERTY()
 	TObjectPtr<AActor> TargetActor;
-	
+
+	/**
+	 * @brief 타겟 락 이펙트(나이아가라)
+	 */
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Effect",meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UNiagaraSystem> TargetLockEffect;
 

@@ -115,15 +115,20 @@ EHitDirection AEnemyBase::GetHitDirection(const double& Degree) const
 }
 
 
+void AEnemyBase::SetDamageCauser(AActor* DamageCauser)
+{
+	if(DamageCauser)
+	{
+		TargetActor = DamageCauser;
+	}
+}
+
 void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResult const& HitInfo,
                             const float PushValue, AActor* DamageCauser, TSubclassOf<UCameraShakeBase> CameraShakeBase)
 {
 	if(!CombatComponent->GetCanDamaged())
 	{
-		if(DamageCauser)
-		{
-			TargetActor = DamageCauser;
-		}
+		SetDamageCauser(DamageCauser);
 		
 		ShowAttributeWidget();
 		CombatComponent->SetCanDamaged(true);

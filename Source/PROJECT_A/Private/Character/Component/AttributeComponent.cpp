@@ -41,23 +41,31 @@ float UAttributeComponent::GetHealthPercentage() const
 
 void UAttributeComponent::Die()
 {
-	if(OwnerCharacter && DamageCauserActor)
+	if (OwnerCharacter && DamageCauserActor)
 	{
-		UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(OwnerCharacter->GetComponentByClass(UWidgetComponent::StaticClass()));
-		const UTargetLockComponent* TargetLockComponent = Cast<UTargetLockComponent>(DamageCauserActor->GetComponentByClass(UTargetLockComponent::StaticClass()));
-		OwnerCharacter->GetMesh()->SetCollisionProfileName("Ragdoll");
-		OwnerCharacter->GetMesh()->SetSimulatePhysics(true);
-		OwnerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		OwnerCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		USkeletalMeshComponent* MeshComponent = OwnerCharacter->GetMesh();
+		UCapsuleComponent* CapsuleComponent = OwnerCharacter->GetCapsuleComponent();
+    
+		MeshComponent->SetCollisionProfileName("Ragdoll");
+		MeshComponent->SetSimulatePhysics(true);
+		CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+    
 		OwnerCharacter->SetLifeSpan(5.f);
-		
-		TargetLockComponent->DisableTargetLockDelegate.ExecuteIfBound();
-		
-		if(WidgetComponent)
+
+		// Disable target lock
+		if (const UTargetLockComponent* TargetLockComponent = Cast<UTargetLockComponent>(DamageCauserActor->GetComponentByClass(UTargetLockComponent::StaticClass())))
+		{
+			TargetLockComponent->DisableTargetLockDelegate.ExecuteIfBound();
+		}
+
+		// Hide the widget component
+		UWidgetComponent* WidgetComponent = Cast<UWidgetComponent>(OwnerCharacter->GetComponentByClass(UWidgetComponent::StaticClass()));
+		if (WidgetComponent)
 		{
 			WidgetComponent->SetVisibility(false);
 		}
-		
+    
 		bIsDead = true;
 	}
 }
