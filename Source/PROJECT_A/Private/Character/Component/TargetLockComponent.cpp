@@ -41,6 +41,7 @@ void UTargetLockComponent::Init()
 	ActivateEffect();
 
 	DisableTargetLockDelegate.BindUObject(this,&UTargetLockComponent::DisableTargetLock);
+	OnTargetLock.BindUObject(this,&UTargetLockComponent::TargetLock);
 }
 
 void UTargetLockComponent::SetEffectLocation() const

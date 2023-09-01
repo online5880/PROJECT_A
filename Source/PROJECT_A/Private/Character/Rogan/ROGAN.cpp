@@ -280,7 +280,7 @@ void AROGAN::TargetLock()
 {
 	if(TargetLockComponent)
 	{
-		TargetLockComponent->TargetLock();
+		TargetLockComponent->OnTargetLock.ExecuteIfBound();
 	}
 }
 

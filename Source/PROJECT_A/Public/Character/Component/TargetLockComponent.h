@@ -7,6 +7,7 @@
 class UNiagaraComponent;
 class UNiagaraSystem;
 DECLARE_DELEGATE(FDisableTargetLockDelegate);
+DECLARE_DELEGATE(FOnTargetLock);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_A_API UTargetLockComponent : public UActorComponent
@@ -17,7 +18,9 @@ public:
 	UTargetLockComponent();
 	
 	FDisableTargetLockDelegate DisableTargetLockDelegate;
-	
+
+	FOnTargetLock OnTargetLock;
+
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
