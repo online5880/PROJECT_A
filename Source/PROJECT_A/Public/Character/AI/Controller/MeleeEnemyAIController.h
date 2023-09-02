@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "MeleeEnemyAIController.generated.h"
 
+class UBehaviorTreeComponent;
 /**
  * 
  */
@@ -17,7 +18,20 @@ class PROJECT_A_API AMeleeEnemyAIController : public AAIController
 public:
 	AMeleeEnemyAIController();
 
+	// key
+	static const FName HomePosKey;
+	static const FName PatrolPosKey;
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* InPawn) override;
+
+private:
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBlackboardData> BlackboardData;
 	
 };
