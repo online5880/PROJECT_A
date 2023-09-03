@@ -21,15 +21,15 @@ EBTNodeResult::Type UBTTask_MeleeFindPatrolPos::ExecuteTask(UBehaviorTreeCompone
 	if (nullptr == ControllingPawn)
 		return EBTNodeResult::Failed;
 
-	
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(ControllingPawn->GetWorld());
+
+	const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(ControllingPawn->GetWorld());
 	if (nullptr == NavSystem)
 		return EBTNodeResult::Failed;
 
-	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AMeleeEnemyAIController::HomePosKey);
+	const FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AMeleeEnemyAIController::HomePosKey);
 	FNavLocation NextPatrol;
 
-	if (NavSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.0f, NextPatrol))
+	if (NavSystem->GetRandomPointInNavigableRadius(Origin, Radius, NextPatrol))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(AMeleeEnemyAIController::PatrolPosKey, NextPatrol.Location);
 		return EBTNodeResult::Succeeded;

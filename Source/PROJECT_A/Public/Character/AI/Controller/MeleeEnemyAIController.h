@@ -19,12 +19,25 @@ public:
 	AMeleeEnemyAIController();
 
 	// key
+	/**
+	 * @brief 처음 시작 위치
+	 */
 	static const FName HomePosKey;
+	/**
+	 * @brief 정찰 위치
+	 */
 	static const FName PatrolPosKey;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
+
+	/**
+	 * @brief 블랙보드 초기화
+	 * @param InPawn Owner Pawn
+	 * @param BlackboardComp BlackBoard Component
+	 */
+	void InitBlackBoard(APawn* InPawn, UBlackboardComponent* BlackboardComp);
 
 private:
 	

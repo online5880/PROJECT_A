@@ -2,6 +2,8 @@
 
 
 #include "Character/AI/Controller/MeleeEnemyAIController.h"
+
+#include "GlobalUtilty.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 const FName AMeleeEnemyAIController::HomePosKey(TEXT("HomePos"));
@@ -20,9 +22,19 @@ void AMeleeEnemyAIController::BeginPlay()
 void AMeleeEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	if(Blackboard)
+	
+	UBlackboardComponent* BlackboardComp = Blackboard.Get();
+	InitBlackBoard(InPawn, BlackboardComp);
+}
+
+void AMeleeEnemyAIController::InitBlackBoard(APawn* InPawn, UBlackboardComponent* BlackboardComp)
+{
+	if(UseBlackboard(BlackboardData,BlackboardComp))
 	{
-		Blackboard->InitializeBlackboard(*BlackboardData);
-		Blackboard->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
+		if(GetBlackboardComponent())
+		{
+			GetBlackboardComponent()->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
+			GetBlackboardComponent()->InitializeBlackboard(*BlackboardData);
+		}
 	}
 }

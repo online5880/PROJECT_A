@@ -18,4 +18,11 @@ public:
 	UBTTask_MeleeFindPatrolPos();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+private:
+	/**
+	 * @brief 정찰 범위
+	 */
+	UPROPERTY(EditAnywhere, Category = "Patrol", meta = (AllowPrivateAccess = "true"))
+	float Radius = 500.f;
 };
