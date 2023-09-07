@@ -102,4 +102,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> Effect;
+
+public:
+	FORCEINLINE bool GetIsTargetLock() const {return bIsTargetLock;}
 };
