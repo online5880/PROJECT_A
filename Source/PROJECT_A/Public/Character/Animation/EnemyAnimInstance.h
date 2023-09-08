@@ -7,6 +7,7 @@
 #include "EnemyAnimInstance.generated.h"
 
 class AEnemyBase;
+class UCharacterMovementComponent;
 /**
  * 
  */
