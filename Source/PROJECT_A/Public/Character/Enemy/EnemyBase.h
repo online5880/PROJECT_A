@@ -6,6 +6,7 @@
 #include "Character/BaseCharacter/BaseCharacter.h"
 #include "EnemyBase.generated.h"
 
+class AMeleeEnemyAIController;
 class UNiagaraComponent;
 enum class EHitDirection : uint8;
 class UWidgetComponent;
@@ -77,4 +78,7 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
+
+	UPROPERTY()
+	TObjectPtr<AMeleeEnemyAIController> MeleeEnemyAIController;
 };

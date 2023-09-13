@@ -3,13 +3,13 @@
 
 #include "Character/Enemy/EnemyBase.h"
 #include "GlobalUtilty.h"
-#include "NiagaraComponent.h"
 #include "Character/Component/AttributeComponent.h"
 #include "Character/Component/CombatComponent.h"
 #include "Character/Enum/HitDirection.h"
 #include "Character/Widget/EnemyAttributeWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Character/AI/Controller/MeleeEnemyAIController.h"
 
 AEnemyBase::AEnemyBase()
 {
@@ -35,6 +35,11 @@ void AEnemyBase::Init()
 	if(EnemyAttributeWidget)
 	{
 		EnemyAttributeWidget->SetEnemyBase(this);
+	}
+
+	if(MeleeEnemyAIController == nullptr)
+	{
+		MeleeEnemyAIController = Cast<AMeleeEnemyAIController>(GetController());
 	}
 }
 
@@ -162,6 +167,11 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 		},0.005f,false);
 
 		PlayCameraShake(CameraShakeBase);
+
+		if(MeleeEnemyAIController)
+		{
+			MeleeEnemyAIController->SetTarget();
+		}
 	}
 }
 

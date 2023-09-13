@@ -70,4 +70,5 @@ public:
 	FORCEINLINE TObjectPtr<UClimbComponent> GetClimbComponent() const {return ClimbComponent;}
 	FORCEINLINE TObjectPtr<UCombatComponent> GetCombatComponent() const {return CombatComponent;}
 	FORCEINLINE TObjectPtr<UAttributeComponent> GetAttributeComponent() const {return AttributeComponent;}
+	FORCEINLINE TObjectPtr<AActor> GetTarget() const {return TargetActor;}
 };

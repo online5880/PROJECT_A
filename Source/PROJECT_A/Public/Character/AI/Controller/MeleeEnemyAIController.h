@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "MeleeEnemyAIController.generated.h"
 
+class AEnemyBase;
 class UBehaviorTreeComponent;
 /**
  * 
@@ -28,6 +29,13 @@ public:
 	 */
 	static const FName PatrolPosKey;
 
+	/**
+	 * @brief 타겟 키
+	 */
+	static const FName TargetKey;
+
+	void SetTarget();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
@@ -46,5 +54,7 @@ private:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBlackboardData> BlackboardData;
-	
+
+	UPROPERTY()
+	TObjectPtr<AEnemyBase> EnemyBase;
 };
