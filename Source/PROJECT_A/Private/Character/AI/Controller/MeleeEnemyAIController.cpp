@@ -3,12 +3,13 @@
 
 #include "Character/AI/Controller/MeleeEnemyAIController.h"
 
+#include "GlobalUtilty.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Character/Enemy/EnemyBase.h"
 
 const FName AMeleeEnemyAIController::HomePosKey(TEXT("HomePos"));
 const FName AMeleeEnemyAIController::PatrolPosKey(TEXT("PatrolPos"));
-const FName AMeleeEnemyAIController::TargetKey(TEXT("TargetKey"));
+const FName AMeleeEnemyAIController::TargetKey(TEXT("Target"));
 
 AMeleeEnemyAIController::AMeleeEnemyAIController()
 {
@@ -18,6 +19,11 @@ void AMeleeEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	RunBehaviorTree(BehaviorTree);
+	
+	if(EnemyBase == nullptr)
+	{
+		EnemyBase = Cast<AEnemyBase>(GetPawn());
+	}
 }
 
 void AMeleeEnemyAIController::OnPossess(APawn* InPawn)
@@ -40,10 +46,12 @@ void AMeleeEnemyAIController::InitBlackBoard(APawn* InPawn, UBlackboardComponent
 	}
 }
 
-void AMeleeEnemyAIController::SetTarget()
+void AMeleeEnemyAIController::SetTarget(AActor* Actor)
 {
-	if(EnemyBase && EnemyBase->GetTarget())
+	PrintEditorMessage(3.f,__FUNCTION__);
+	if(EnemyBase && Actor)
 	{
-		GetBlackboardComponent()->SetValueAsObject(TargetKey, EnemyBase.Get()->GetTarget());	
+		PrintEditorMessage(3.f,__FUNCTION__);
+		GetBlackboardComponent()->SetValueAsObject(TargetKey, Actor);	
 	}
 }

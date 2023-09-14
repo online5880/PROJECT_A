@@ -33,8 +33,8 @@ public:
 	 * @brief 타겟 키
 	 */
 	static const FName TargetKey;
-
-	void SetTarget();
+	
+	void SetTarget(AActor* Actor);
 
 protected:
 	virtual void BeginPlay() override;

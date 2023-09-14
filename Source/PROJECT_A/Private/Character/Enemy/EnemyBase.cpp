@@ -170,7 +170,7 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 
 		if(MeleeEnemyAIController)
 		{
-			MeleeEnemyAIController->SetTarget();
+			MeleeEnemyAIController->SetTarget(TargetActor);
 		}
 	}
 }
