@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
+DECLARE_DELEGATE(FOnGuardDelegate);
+
 USTRUCT(Atomic, BlueprintType)
 struct FCombatMontageInfo
 {
@@ -45,6 +47,8 @@ public:
 	 * @param InfoName TMap<FString,FCombatMontageInfo> 의 Key
 	 */
 	void Attack(const FString& InfoName);
+
+	FOnGuardDelegate OnGuardDelegate;
 protected:
 	// 파이터 공격
 	void PlayMontage(const FCombatMontageInfo& Info);
@@ -67,6 +71,8 @@ protected:
 	bool CanExecuteAttack() const;
 
 	FCombatMontageInfo GetMontageInfo(const FString& Name);
+
+	void PlayGuardMontage();
 
 private:
 	// 컴포넌트 소유 액터
@@ -92,7 +98,7 @@ private:
 	// TODO 추후 리팩토링
 	// Montage(이름, Asset) 및 MaxCombo 횟수 배열
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	TMap<FString,FCombatMontageInfo> MontageInfos;
+	TMap<FString,FCombatMontageInfo> CombatMontageInfoMap;
 	
 	// 현재 재생중인 Montage
 	UPROPERTY()
@@ -112,6 +118,10 @@ private:
 	// 피격 Montage
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> ReactMontage;
+
+	// 가드 Montage
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Montage", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> GuardMontage;
 	
 public:
 	FORCEINLINE bool GetCanDamaged() const {return bCanDamaged;}
@@ -121,4 +131,5 @@ public:
 	FORCEINLINE float GetDebugTime() const {return DebugTime;}
 
 	FORCEINLINE TObjectPtr<UAnimMontage> GetReactMontage() const {return ReactMontage;}
+	FORCEINLINE TObjectPtr<UAnimMontage> GetGuardMontage() const {return GuardMontage;}
 };

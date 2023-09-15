@@ -64,8 +64,10 @@ void UMeleeTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 		{
 			HitActors.Add(HitActor);
 			IgnoreActors.AddUnique(HitActor);
-			
-			DrawDebugDirectionalArrow(
+
+			if(DrawDebugType(MeshComp) == EDrawDebugTrace::ForDuration)
+			{
+				DrawDebugDirectionalArrow(
 				World,
 				HitResult.ImpactPoint,
 				HitResult.ImpactPoint+(HitResult.ImpactNormal*FVector(1.f,1.f,0.f))*-100.f,
@@ -75,6 +77,7 @@ void UMeleeTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 				5.f,
 				0,
 				2.f);
+			}
 			
 			ExecuteDamagedOnHitActors(HitActors,HitResult.ImpactNormal,HitResult,MeshComp->GetOwner());
 		}

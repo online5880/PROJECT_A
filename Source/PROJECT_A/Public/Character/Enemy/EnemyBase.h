@@ -69,6 +69,8 @@ protected:
 	 */
 	void PlayReactMontage(const FName& Section) const;
 
+	void PlayGuardMontage() const;
+
 private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Widget", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> AttributeWidget;

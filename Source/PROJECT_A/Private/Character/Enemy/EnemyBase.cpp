@@ -142,9 +142,6 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 		const FVector LaunchDirection = Normal * FVector(1.f, 1.f, 0.f) * -PushValue;
 		LaunchCharacter(LaunchDirection, false, true);
 		
-		// Damaged
-		AttributeComponent->DecreaseHealth(Damage,DamageCauser);
-
 		// Calc Degree
 		double Degree;
 		CalculateHitDegree(HitInfo, Degree);
@@ -172,6 +169,9 @@ void AEnemyBase::TakeDamage(const float Damage, const FVector& Normal, FHitResul
 		{
 			MeleeEnemyAIController->SetTarget(TargetActor);
 		}
+		
+		// Damaged
+		AttributeComponent->DecreaseHealth(Damage,DamageCauser);
 	}
 }
 
@@ -189,6 +189,14 @@ void AEnemyBase::PlayReactMontage(const FName& Section) const
 	{
 		AnimInstance->Montage_Play(CombatComponent->GetReactMontage());
 		AnimInstance->Montage_JumpToSection(Section);
+	}
+}
+
+void AEnemyBase::PlayGuardMontage() const
+{
+	if(AnimInstance && CombatComponent->GetGuardMontage())
+	{
+		AnimInstance->Montage_Play(CombatComponent->GetGuardMontage());
 	}
 }
 

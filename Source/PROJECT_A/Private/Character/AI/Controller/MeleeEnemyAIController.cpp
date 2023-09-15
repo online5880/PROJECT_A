@@ -48,10 +48,8 @@ void AMeleeEnemyAIController::InitBlackBoard(APawn* InPawn, UBlackboardComponent
 
 void AMeleeEnemyAIController::SetTarget(AActor* Actor)
 {
-	PrintEditorMessage(3.f,__FUNCTION__);
 	if(EnemyBase && Actor)
 	{
-		PrintEditorMessage(3.f,__FUNCTION__);
 		GetBlackboardComponent()->SetValueAsObject(TargetKey, Actor);	
 	}
 }
